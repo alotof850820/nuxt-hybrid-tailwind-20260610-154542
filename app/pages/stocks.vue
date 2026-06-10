@@ -1,6 +1,33 @@
 <script setup lang="ts">
 const plan = useFinancialPlan()
 
+const stockMetrics = computed(() => [
+  {
+    label: '股票資產',
+    value: `${plan.formatWan(plan.finalValue.value)} 萬`,
+    detail: `第 ${plan.totalYears.value} 年推估`,
+    tone: 'text-blue-700',
+  },
+  {
+    label: '未實現損益',
+    value: `${plan.netProfit.value >= 0 ? '+' : ''}${plan.formatWan(plan.netProfit.value)} 萬`,
+    detail: '總資產扣除投入與提領',
+    tone: plan.netProfit.value >= 0 ? 'text-green-700' : 'text-red-700',
+  },
+  {
+    label: '累積投入',
+    value: `${plan.formatWan(plan.totalInput.value)} 萬`,
+    detail: `月投入 ${plan.monthlyInput.value} 萬`,
+    tone: 'text-slate-900',
+  },
+  {
+    label: '定期提領',
+    value: `${plan.formatWan(plan.totalWithdrawal.value)} 萬`,
+    detail: plan.startWithdrawalYear.value > plan.totalYears.value ? '目前不提領' : `第 ${plan.startWithdrawalYear.value} 年開始`,
+    tone: 'text-slate-900',
+  },
+])
+
 const stocks = [
   { sym: 'TSMC', name: '台積電', price: '$156.40', change: '+3.2%', up: true, cap: '$809B', rating: 'buy' },
   { sym: 'NVDA', name: 'Nvidia', price: '$1,048', change: '+1.8%', up: true, cap: '$2.58T', rating: 'buy' },
@@ -27,6 +54,14 @@ useHead({
       <h1 class="text-[17px] font-medium text-slate-900">股票</h1>
       <p class="mt-1 text-xs text-slate-500">投資基本設定、投入提領規劃與追蹤股票</p>
     </header>
+
+    <section class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <article v-for="metric in stockMetrics" :key="metric.label" class="card">
+        <p class="text-xs font-medium text-slate-500">{{ metric.label }}</p>
+        <p class="mt-1 text-2xl font-semibold" :class="metric.tone">{{ metric.value }}</p>
+        <p class="mt-2 text-xs text-slate-500">{{ metric.detail }}</p>
+      </article>
+    </section>
 
     <section class="card">
       <h2 class="mb-4 text-[15px] font-medium text-slate-900">投資基本設定</h2>

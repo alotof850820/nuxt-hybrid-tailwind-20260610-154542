@@ -76,3 +76,15 @@
 - Runtime verification passed: `GET /settings` returned HTTP 200 and contained `設定`, `本金設定`, and `初始本金`.
 - Runtime verification passed: `GET /house` returned HTTP 200 and contained `買房規劃`, `買房參數`, and `啟用買房規劃`.
 - Runtime verification passed: `GET /details` returned HTTP 200 and contained `年度收支明細`, `期初`, and `期末`.
+- User requested refining the dashboard to match `C:\Users\User\Downloads\planlab_dashboard_v3.html`, use the prior TSX-style chart package behavior, show hover asset values and X/Y quantitative axes, move stock metrics to `股票`, move house logic to `買房`, and keep the homepage limited to total assets, asset trend, and allocation.
+- Added `chart.js` as the charting dependency.
+- Added `app/components/AssetTrendChart.client.vue` with a Chart.js line chart, native hover tooltip showing `總資產`, and labeled X/Y axes with `萬` tick formatting.
+- Updated `app/pages/index.vue` so the homepage only shows `總資產`, `資產變化趨勢`, and `資產配置` for `股票` and `買房`.
+- Updated `app/pages/stocks.vue` with stock-related metrics: `股票資產`, `未實現損益`, `累積投入`, and `定期提領`, while keeping investment settings and contribution/withdrawal planning there.
+- Updated `app/pages/house.vue` with house-related metrics: `買房支出`, `頭期款`, `年房貸支出`, and `貸款期間`, while keeping house planning controls there.
+- Verification passed: `npm run build`.
+- Build notes: Nuxt build completed with existing sourcemap warnings from Nuxt/Tailwind plugins and a Node deprecation warning.
+- Runtime verification passed: `GET /`, `/stocks`, and `/house` each returned HTTP 200.
+- Runtime content verification passed: `/` contained `總資產`, `資產變化趨勢`, and `資產配置`, and no longer contained `累積投入`, `買房支出`, or `定期提領`.
+- Runtime content verification passed: `/stocks` contained `股票資產`, `未實現損益`, `累積投入`, `定期提領`, `投資基本設定`, and `投入與提領規劃`.
+- Runtime content verification passed: `/house` contained `買房規劃`, `買房支出`, `頭期款`, `年房貸支出`, `貸款期間`, and `買房參數`.

@@ -1,6 +1,30 @@
 <script setup lang="ts">
 const plan = useFinancialPlan()
 
+const yearlyMortgage = computed(() => plan.monthlyPayment.value * 12)
+const houseMetrics = computed(() => [
+  {
+    label: '買房支出',
+    value: `${plan.formatWan(plan.buyHouse.value ? plan.totalHouseExpense.value : 0)} 萬`,
+    detail: plan.buyHouse.value ? `第 ${plan.houseYear.value} 年開始` : '尚未啟用買房規劃',
+  },
+  {
+    label: '頭期款',
+    value: `${plan.formatWan(plan.buyHouse.value ? plan.downPayment.value : 0)} 萬`,
+    detail: '一次性支出',
+  },
+  {
+    label: '年房貸支出',
+    value: `${plan.formatWan(plan.buyHouse.value ? yearlyMortgage.value : 0)} 萬`,
+    detail: `月付 ${plan.monthlyPayment.value} 萬`,
+  },
+  {
+    label: '貸款期間',
+    value: plan.buyHouse.value ? `${plan.loanYears.value} 年` : '未設定',
+    detail: plan.buyHouse.value ? `影響第 ${plan.houseYear.value} 年後現金流` : '啟用後可計算',
+  },
+])
+
 useHead({
   title: '買房規劃 | PlanLab',
 })
@@ -12,6 +36,14 @@ useHead({
       <h1 class="text-[17px] font-medium text-slate-900">買房規劃</h1>
       <p class="mt-1 text-xs text-slate-500">頭期款、月付與貸款年限對資產曲線的影響</p>
     </header>
+
+    <section class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <article v-for="metric in houseMetrics" :key="metric.label" class="card">
+        <p class="text-xs font-medium text-slate-500">{{ metric.label }}</p>
+        <p class="mt-1 text-2xl font-semibold text-slate-950">{{ metric.value }}</p>
+        <p class="mt-2 text-xs text-slate-500">{{ metric.detail }}</p>
+      </article>
+    </section>
 
     <section class="card">
       <div class="mb-4 flex items-center justify-between">

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "latest",
+    "chart.js": "^4.5.1",
     "nuxt": "latest",
     "tailwindcss": "latest",
     "vue": "latest",

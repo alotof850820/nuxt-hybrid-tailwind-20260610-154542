@@ -4,7 +4,7 @@
       "id": "projectionlab-dashboard-figma-layout",
       "title": "ProjectionLab-Style Figma Dashboard Layout",
       "status": "in_progress",
-      "scope": "Create a PlanLab investment dashboard in the local Nuxt architecture based on the provided HTML and TSX references, including shared financial projection logic, home summary/trend, stocks settings and withdrawal planning, settings principal control, house planning, annual details, and documented Figma workflow."
+      "scope": "Create a PlanLab investment dashboard in the local Nuxt architecture based on the provided HTML and TSX references, including shared financial projection logic, Chart.js asset trend with hover tooltip and quantitative axes, a homepage limited to total assets/trend/allocation, stocks settings and withdrawal planning with stock metrics, settings principal control, house planning with house metrics, annual details, and documented Figma workflow."
     }
   ]
 }
