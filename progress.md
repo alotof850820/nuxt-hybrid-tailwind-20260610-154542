@@ -88,3 +88,5 @@
 - Runtime content verification passed: `/` contained `總資產`, `資產變化趨勢`, and `資產配置`, and no longer contained `累積投入`, `買房支出`, or `定期提領`.
 - Runtime content verification passed: `/stocks` contained `股票資產`, `未實現損益`, `累積投入`, `定期提領`, `投資基本設定`, and `投入與提領規劃`.
 - Runtime content verification passed: `/house` contained `買房規劃`, `買房支出`, `頭期款`, `年房貸支出`, `貸款期間`, and `買房參數`.
+- User pointed out that requested features were only recorded in `progress.md` and not visible as feature records in `feature_list.json`.
+- Updated `feature_list.json` to keep exactly one `in_progress` umbrella feature while adding completed records for the Figma layout, Figma workflow skill, local sidebar/footer shell, HTML UI adaptation, TSX feature reorganization, and Chart.js/page-metrics refinement.

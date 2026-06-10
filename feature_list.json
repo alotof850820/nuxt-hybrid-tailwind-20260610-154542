@@ -5,6 +5,42 @@
       "title": "ProjectionLab-Style Figma Dashboard Layout",
       "status": "in_progress",
       "scope": "Create a PlanLab investment dashboard in the local Nuxt architecture based on the provided HTML and TSX references, including shared financial projection logic, Chart.js asset trend with hover tooltip and quantitative axes, a homepage limited to total assets/trend/allocation, stocks settings and withdrawal planning with stock metrics, settings principal control, house planning with house metrics, annual details, and documented Figma workflow."
+    },
+    {
+      "id": "figma-projectionlab-layout-file",
+      "title": "Create ProjectionLab-Style Figma Layout",
+      "status": "completed",
+      "scope": "Create a new Figma file with a ProjectionLab-inspired dashboard layout, sidebar shell, desktop frame, and documented design direction."
+    },
+    {
+      "id": "projectionlab-figma-layout-skill",
+      "title": "Document Figma Layout Workflow As Project Skill",
+      "status": "completed",
+      "scope": "Capture the ProjectionLab-inspired Figma layout process in a project-local Codex skill under skills/projectionlab-figma-layout."
+    },
+    {
+      "id": "nuxt-shell-sidebar-footer",
+      "title": "Add Local Layout Shell With Sidebar And Footer",
+      "status": "completed",
+      "scope": "Implement the local Nuxt layout framework with a left sidebar, blank main page, footer, and initial sidebar entries for home and stocks."
+    },
+    {
+      "id": "planlab-html-ui-adaptation",
+      "title": "Adapt PlanLab HTML UI Into Nuxt",
+      "status": "completed",
+      "scope": "Adapt the provided planlab_dashboard_v3.html dashboard style into the Nuxt app shell, home dashboard, stocks page, shared cards, tables, and compact dashboard styling."
+    },
+    {
+      "id": "investment-tsx-feature-reorganization",
+      "title": "Reorganize Investment TSX Features Into Pages",
+      "status": "completed",
+      "scope": "Inspect investment_comparison.tsx, port its financial projection logic into a shared composable, move principal to settings, investment settings and contribution/withdrawal planning to stocks, house planning to house, financial summary and asset trend to home, and annual details to details."
+    },
+    {
+      "id": "chartjs-home-trend-and-page-metrics",
+      "title": "Refine Home Chart And Move Page Metrics",
+      "status": "completed",
+      "scope": "Use Chart.js for the asset trend chart with hover asset tooltip and quantitative X/Y axes, keep the homepage limited to total assets, asset trend, and asset allocation, move stock metrics to stocks, and move house metrics and logic to house."
     }
   ]
 }
