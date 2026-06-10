@@ -4,7 +4,7 @@
       "id": "projectionlab-dashboard-figma-layout",
       "title": "ProjectionLab-Style Figma Dashboard Layout",
       "status": "in_progress",
-      "scope": "Create a new Figma design file with a ProjectionLab-inspired financial planning dashboard layout framework, including sidebar navigation, top controls, projection chart, KPI cards, summary rail, modules, handoff notes, and a project-local skill documenting the repeatable Figma workflow."
+      "scope": "Create a ProjectionLab-inspired app-shell layout framework, including a persistent left sidebar with `首頁` and `股票`, blank main pages, a footer, and documentation of the Figma workflow used to derive the layout."
     }
   ]
 }

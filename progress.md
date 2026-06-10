@@ -40,3 +40,14 @@
 - Created project-local skill at `skills/projectionlab-figma-layout/SKILL.md` to capture the ProjectionLab-inspired Figma layout workflow.
 - Added generated skill UI metadata at `skills/projectionlab-figma-layout/agents/openai.yaml`.
 - Verification attempted: `python C:\Users\User\.codex\skills\.system\skill-creator\scripts\quick_validate.py skills\projectionlab-figma-layout` failed because the local Python environment is missing `yaml`.
+- User requested Figma layout update: add footer, keep main page blank, and simplify sidebar to `首頁` and `股票`.
+- Figma write attempted against `https://www.figma.com/design/uV2OZXmmHEkDZFDSWfRD3g`.
+- Blocked: Figma MCP returned Starter plan tool-call limit before the layout update could be written.
+- Implemented the requested layout framework in Nuxt after Figma MCP remained unavailable.
+- Updated `app/layouts/default.vue` with a persistent left sidebar containing `首頁` and `股票`, a blank main content region, and a footer.
+- Replaced `app/pages/index.vue` with a blank home main page.
+- Added `app/pages/stocks.vue` as a blank stocks main page.
+- Updated `app/assets/css/main.css` from the dark starter background to the light app-shell workspace background.
+- Verification passed: `npm run build`.
+- Runtime verification passed: `GET /` returned HTTP 200 and contained `首頁`, `股票`, and `Footer`.
+- Runtime verification passed: `GET /stocks` returned HTTP 200 and contained `首頁`, `股票`, and `Footer`.
