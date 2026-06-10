@@ -27,3 +27,5 @@
 - Vercel runtime verification passed: `GET /` returned HTTP 200 and SSR content.
 - Vercel runtime verification passed: `GET /spa` returned HTTP 200.
 - Vercel runtime verification passed: `GET /api/health` returned HTTP 200 health JSON.
+- Updated global Codex guidance in `C:\Users\User\.codex\AGENTS.md` and `C:\Users\User\.codex\docs\*.md` with the GitHub version-control and Vercel deployment workflow.
+- Verification passed: searched global Codex docs for `GitHub or Vercel delivery work`, `GitHub And Vercel Delivery Standard`, `Deployment And CI/CD`, and `GitHub And Vercel Tooling Facts`.
