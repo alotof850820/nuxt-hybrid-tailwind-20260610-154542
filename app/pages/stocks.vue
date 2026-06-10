@@ -1,9 +1,5 @@
 <script setup lang="ts">
-const kpis = [
-  { label: '未實現損益', value: '+$34K', delta: '+2.8%', tone: 'up' },
-  { label: '年化報酬', value: '14.2%', delta: 'vs 標指 11.3%', tone: 'up' },
-  { label: '本月回報', value: '+6.1%', delta: '上月 +5.2%', tone: 'muted' },
-]
+const plan = useFinancialPlan()
 
 const stocks = [
   { sym: 'TSMC', name: '台積電', price: '$156.40', change: '+3.2%', up: true, cap: '$809B', rating: 'buy' },
@@ -26,22 +22,50 @@ useHead({
 </script>
 
 <template>
-  <div class="page-shell">
-    <header class="mb-[18px]">
+  <div class="page-shell space-y-5">
+    <header>
       <h1 class="text-[17px] font-medium text-slate-900">股票</h1>
-      <p class="mt-1 text-xs text-slate-500">追蹤中的股票與 ETF</p>
+      <p class="mt-1 text-xs text-slate-500">投資基本設定、投入提領規劃與追蹤股票</p>
     </header>
 
-    <section class="mb-4 grid grid-cols-3 gap-2.5">
-      <article v-for="kpi in kpis" :key="kpi.label" class="rounded-md bg-slate-50 px-3.5 py-3">
-        <p class="mb-1 text-[11px] font-medium uppercase tracking-[0.05em] text-slate-500">
-          {{ kpi.label }}
-        </p>
-        <p class="text-xl font-medium text-slate-900">{{ kpi.value }}</p>
-        <p class="mt-1 text-[11px]" :class="kpi.tone === 'up' ? 'text-green-600' : 'text-slate-500'">
-          {{ kpi.delta }}
-        </p>
-      </article>
+    <section class="card">
+      <h2 class="mb-4 text-[15px] font-medium text-slate-900">投資基本設定</h2>
+      <div class="grid gap-4 lg:grid-cols-3">
+        <label class="range-field">
+          <span>月投入：{{ plan.monthlyInput.value }} 萬（年投 {{ plan.annualInput.value }} 萬）</span>
+          <input v-model.number="plan.monthlyInput.value" class="w-full" type="range" min="0" max="25" step="0.5">
+        </label>
+        <label class="range-field">
+          <span>年化報酬：{{ plan.returnRate.value }}%</span>
+          <input v-model.number="plan.returnRate.value" class="w-full" type="range" min="0" max="20" step="1">
+        </label>
+        <label class="range-field">
+          <span>規劃年數：{{ plan.totalYears.value }} 年</span>
+          <input v-model.number="plan.totalYears.value" class="w-full" type="range" min="10" max="50" step="1">
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="mb-4 text-[15px] font-medium text-slate-900">投入與提領規劃</h2>
+      <div class="grid gap-4 lg:grid-cols-2">
+        <label class="range-field">
+          <span>
+            {{ plan.stopInputYear.value > plan.totalYears.value ? '持續投入到最後' : `第 ${plan.stopInputYear.value} 年後停止投入` }}
+          </span>
+          <input v-model.number="plan.stopInputYear.value" class="w-full" type="range" min="0" :max="plan.totalYears.value + 1" step="1">
+        </label>
+        <label class="range-field">
+          <span>每年提領：{{ plan.withdrawalAmount.value }} 萬</span>
+          <input v-model.number="plan.withdrawalAmount.value" class="w-full" type="range" min="0" max="200" step="10">
+        </label>
+        <label class="range-field lg:col-span-2">
+          <span>
+            {{ plan.startWithdrawalYear.value > plan.totalYears.value ? '不提領' : `第 ${plan.startWithdrawalYear.value} 年開始提領` }}
+          </span>
+          <input v-model.number="plan.startWithdrawalYear.value" class="w-full" type="range" min="1" :max="plan.totalYears.value + 1" step="1">
+        </label>
+      </div>
     </section>
 
     <section class="card overflow-hidden p-0">
@@ -57,13 +81,11 @@ useHead({
           </tr>
         </thead>
         <tbody>
-          <tr v-for="stock in stocks" :key="stock.sym" class="group">
+          <tr v-for="stock in stocks" :key="stock.sym">
             <td class="table-td font-medium text-slate-900">{{ stock.sym }}</td>
             <td class="table-td text-slate-500">{{ stock.name }}</td>
             <td class="table-td text-slate-900">{{ stock.price }}</td>
-            <td class="table-td" :class="stock.up ? 'text-green-600' : 'text-red-600'">
-              {{ stock.change }}
-            </td>
+            <td class="table-td" :class="stock.up ? 'text-green-600' : 'text-red-600'">{{ stock.change }}</td>
             <td class="table-td text-slate-500">{{ stock.cap }}</td>
             <td class="table-td">
               <span class="inline-block rounded-full px-2 py-0.5 text-[10px] font-medium" :class="ratingClass(stock.rating)">

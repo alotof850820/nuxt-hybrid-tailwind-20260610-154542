@@ -48,15 +48,21 @@
         </nav>
 
         <div class="border-t border-white/[0.07] px-2 pb-3 pt-2.5">
-          <div class="flex items-center gap-2.5 overflow-hidden rounded-lg px-2 py-2 text-[13px] text-[#7a8fa8]">
-            <span class="w-5 shrink-0 text-center text-[17px] font-semibold">S</span>
+          <NuxtLink
+            v-for="item in footerItems"
+            :key="item.to"
+            :to="item.to"
+            class="flex items-center gap-2.5 overflow-hidden rounded-lg px-2 py-2 text-[13px] text-[#7a8fa8] transition hover:bg-white/[0.06] hover:text-slate-300"
+            active-class="bg-blue-500/15 text-blue-300"
+          >
+            <span class="w-5 shrink-0 text-center text-[17px] font-semibold">{{ item.icon }}</span>
             <span
               class="whitespace-nowrap transition-all duration-200"
               :class="isCollapsed ? 'max-w-0 opacity-0' : 'max-w-36 opacity-100'"
             >
-              設定
+              {{ item.label }}
             </span>
-          </div>
+          </NuxtLink>
         </div>
       </aside>
 
@@ -103,10 +109,14 @@ const isCollapsed = ref(false)
 const navItems = [
   { to: '/', label: '首頁', icon: 'H' },
   { to: '/stocks', label: '股票', icon: 'K' },
+  { to: '/house', label: '買房規劃', icon: 'B' },
+  { to: '/details', label: '明細', icon: 'D' },
 ]
 
+const footerItems = [{ to: '/settings', label: '設定', icon: 'S' }]
+
 const activeItem = computed(() => {
-  return navItems.find((item) => item.to === route.path) ?? navItems[0]
+  return [...navItems, ...footerItems].find((item) => item.to === route.path) ?? navItems[0]
 })
 
 const currentTitle = computed(() => activeItem.value.label)

@@ -60,3 +60,19 @@
 - Verification passed: `npm run build`.
 - Runtime verification passed: `GET /` returned HTTP 200 and contained `財務成果總覽`, `資產變化趨勢`, `資產配置`, `首頁`, `股票`, and `© 2026 PlanLab`.
 - Runtime verification passed: `GET /stocks` returned HTTP 200 and contained `追蹤中的股票與 ETF`, `未實現損益`, `TSMC`, `NVDA`, `首頁`, `股票`, and `© 2026 PlanLab`.
+- User provided `C:\Users\User\Downloads\investment_comparison.tsx` and requested reorganizing its features into the local Nuxt app.
+- Inspected TSX functionality: investment basic settings, contribution/withdrawal planning, house planning, other major expenses, financial summary, asset trend, and annual income/expense details.
+- Added shared calculation/state composable at `app/composables/useFinancialPlan.ts`, porting the TSX yearly projection logic to Nuxt `useState` and computed values.
+- Omitted other major expenses per user request; `totalOtherExpense` is currently fixed at 0.
+- Updated sidebar navigation with `買房規劃` and `明細`; settings remains available through the lower sidebar area.
+- Moved initial principal setting to `app/pages/settings.vue`.
+- Moved remaining investment basic settings plus contribution/withdrawal planning to `app/pages/stocks.vue`.
+- Added house planning UI at `app/pages/house.vue`.
+- Moved financial summary and asset trend to `app/pages/index.vue`.
+- Added annual income/expense details at `app/pages/details.vue`.
+- Verification passed: `npm run build`.
+- Runtime verification passed: `GET /` returned HTTP 200 and contained `財務成果總覽`, `資產變化趨勢`, and `累積投入`.
+- Runtime verification passed: `GET /stocks` returned HTTP 200 and contained `投資基本設定`, `投入與提領規劃`, and `追蹤股票`.
+- Runtime verification passed: `GET /settings` returned HTTP 200 and contained `設定`, `本金設定`, and `初始本金`.
+- Runtime verification passed: `GET /house` returned HTTP 200 and contained `買房規劃`, `買房參數`, and `啟用買房規劃`.
+- Runtime verification passed: `GET /details` returned HTTP 200 and contained `年度收支明細`, `期初`, and `期末`.

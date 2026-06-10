@@ -53,6 +53,15 @@ body {
     vertical-align: middle;
   }
 
+  .range-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #334155;
+  }
+
   tbody tr:last-child .table-td {
     border-bottom: 0;
   }
