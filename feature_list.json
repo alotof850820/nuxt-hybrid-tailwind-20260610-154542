@@ -1,0 +1,10 @@
+{
+  "features": [
+    {
+      "id": "nuxt-ssr-spa-hybrid-tailwind",
+      "title": "Nuxt SSR/SPA Hybrid Tailwind Starter",
+      "status": "in_progress",
+      "scope": "Create a root-level Nuxt project with SSR defaults, SPA route rules, Tailwind CSS v4 via Vite, example app structure, verification, dev server startup, GitHub push, and Vercel deployment verification."
+    }
+  ]
+}

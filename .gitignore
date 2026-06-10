@@ -1,0 +1,14 @@
+node_modules
+.nuxt
+.output
+.vercel
+.data
+dist
+.env
+.env.*
+!.env.example
+.nuxt-dev.log
+.nuxt-dev.err.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
