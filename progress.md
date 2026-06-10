@@ -16,3 +16,14 @@
 - Runtime verification passed: `GET /` returned HTTP 200 and SSR content.
 - Runtime verification passed: `GET /spa` returned HTTP 200 SPA template.
 - Runtime verification passed: `GET /api/health` returned HTTP 200 health JSON.
+- Initialized Git repository on `main`.
+- Created private GitHub repository: `https://github.com/alotof850820/nuxt-hybrid-tailwind-20260610-154542`.
+- Pushed initial commit `84dc481` to GitHub.
+- Created Vercel project: `nuxt-hybrid-tailwind-20260610-154542`.
+- Linked local project to Vercel project ID `prj_R1IGTxqvC5gOclvx7kLp9YNiHEzU`.
+- Connected Vercel project to GitHub repository for automatic deployments.
+- Production deployment ready: `https://nuxt-hybrid-tailwind-20260610-15454.vercel.app`.
+- Deployment inspector: `https://vercel.com/alotof850820s-projects/nuxt-hybrid-tailwind-20260610-154542/EJ1Rhm1EnB5doXjt5itcsh54QbH1`.
+- Vercel runtime verification passed: `GET /` returned HTTP 200 and SSR content.
+- Vercel runtime verification passed: `GET /spa` returned HTTP 200.
+- Vercel runtime verification passed: `GET /api/health` returned HTTP 200 health JSON.
