@@ -29,3 +29,11 @@
 - Vercel runtime verification passed: `GET /api/health` returned HTTP 200 health JSON.
 - Updated global Codex guidance in `C:\Users\User\.codex\AGENTS.md` and `C:\Users\User\.codex\docs\*.md` with the GitHub version-control and Vercel deployment workflow.
 - Verification passed: searched global Codex docs for `GitHub or Vercel delivery work`, `GitHub And Vercel Delivery Standard`, `Deployment And CI/CD`, and `GitHub And Vercel Tooling Facts`.
+- User changed scope to a ProjectionLab-style Figma layout framework.
+- Created new Figma design file: `ProjectionLab-style Planning Dashboard Layout`.
+- Figma URL: `https://www.figma.com/design/uV2OZXmmHEkDZFDSWfRD3g`.
+- Created final Figma page: `ProjectionLab-style Layout Final`.
+- Created desktop frame: `Desktop Dashboard - ProjectionLab-style Layout`.
+- Added design spec at `docs/superpowers/specs/2026-06-10-projectionlab-dashboard-layout-design.md`.
+- Verification passed: searched Figma design-system assets; no reusable components/styles/variables were returned.
+- Verification passed: final Figma write completed after correcting text alignment and text value type issues.

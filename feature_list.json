@@ -1,10 +1,10 @@
 {
   "features": [
     {
-      "id": "nuxt-ssr-spa-hybrid-tailwind",
-      "title": "Nuxt SSR/SPA Hybrid Tailwind Starter",
+      "id": "projectionlab-dashboard-figma-layout",
+      "title": "ProjectionLab-Style Figma Dashboard Layout",
       "status": "in_progress",
-      "scope": "Create a root-level Nuxt project with SSR defaults, SPA route rules, Tailwind CSS v4 via Vite, example app structure, verification, dev server startup, GitHub push, and Vercel deployment verification."
+      "scope": "Create a new Figma design file with a ProjectionLab-inspired financial planning dashboard layout framework, including sidebar navigation, top controls, projection chart, KPI cards, summary rail, modules, and handoff notes."
     }
   ]
 }
