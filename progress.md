@@ -51,3 +51,12 @@
 - Verification passed: `npm run build`.
 - Runtime verification passed: `GET /` returned HTTP 200 and contained `首頁`, `股票`, and `Footer`.
 - Runtime verification passed: `GET /stocks` returned HTTP 200 and contained `首頁`, `股票`, and `Footer`.
+- User provided `C:\Users\User\Downloads\planlab_dashboard_v3.html` as the UI reference for the local Nuxt app.
+- Adapted the provided HTML UI into the local Nuxt architecture instead of embedding the raw HTML/JS.
+- Updated `app/layouts/default.vue` to match the reference app shell: collapsible sidebar, compact topbar breadcrumb, account/notification controls, and compact footer.
+- Updated `app/pages/index.vue` with the reference home dashboard: financial overview header, total-assets KPI, period-switchable SVG trend chart, and allocation breakdown.
+- Updated `app/pages/stocks.vue` with the reference stocks dashboard: KPI row and tracked-stock table.
+- Updated `app/assets/css/main.css` with shared card/table/page animation styles for the adapted UI.
+- Verification passed: `npm run build`.
+- Runtime verification passed: `GET /` returned HTTP 200 and contained `財務成果總覽`, `資產變化趨勢`, `資產配置`, `首頁`, `股票`, and `© 2026 PlanLab`.
+- Runtime verification passed: `GET /stocks` returned HTTP 200 and contained `追蹤中的股票與 ETF`, `未實現損益`, `TSMC`, `NVDA`, `首頁`, `股票`, and `© 2026 PlanLab`.

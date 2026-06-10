@@ -4,7 +4,7 @@
       "id": "projectionlab-dashboard-figma-layout",
       "title": "ProjectionLab-Style Figma Dashboard Layout",
       "status": "in_progress",
-      "scope": "Create a ProjectionLab-inspired app-shell layout framework, including a persistent left sidebar with `首頁` and `股票`, blank main pages, a footer, and documentation of the Figma workflow used to derive the layout."
+      "scope": "Create a PlanLab investment dashboard in the local Nuxt architecture based on the provided HTML UI reference, including a collapsible sidebar, topbar, footer, home dashboard, stocks dashboard, and documented Figma workflow."
     }
   ]
 }

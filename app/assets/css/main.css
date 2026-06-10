@@ -16,10 +16,60 @@ html {
 body {
   min-height: 100vh;
   margin: 0;
-  background: #f6f8fa;
-  color: #15202b;
+  background: #e8edf4;
+  color: #0f172a;
 }
 
 ::selection {
   background: rgb(45 212 191 / 0.35);
+}
+
+@layer components {
+  .page-shell {
+    animation: page-fade 0.18s ease;
+  }
+
+  .card {
+    border: 0.5px solid #e2e8f0;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 16px;
+  }
+
+  .table-th {
+    border-bottom: 0.5px solid #e2e8f0;
+    padding: 7px 10px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #64748b;
+  }
+
+  .table-td {
+    border-bottom: 0.5px solid #e2e8f0;
+    padding: 9px 10px;
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child .table-td {
+    border-bottom: 0;
+  }
+
+  tbody tr:hover .table-td {
+    background: #f8fafc;
+  }
+}
+
+@keyframes page-fade {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

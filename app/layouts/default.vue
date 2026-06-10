@@ -1,53 +1,95 @@
 <template>
-  <div class="min-h-screen bg-[#f6f8fa] text-slate-900">
-    <div class="grid min-h-screen grid-cols-[240px_1fr]">
-      <aside class="flex min-h-screen flex-col bg-[#263241] text-slate-100">
-        <div class="px-7 py-6">
-          <NuxtLink to="/" class="block text-xl font-bold text-white">
-            PlanLab
+  <div class="min-h-screen bg-slate-100 text-slate-900">
+    <div class="flex h-screen overflow-hidden">
+      <aside
+        class="relative flex shrink-0 flex-col bg-[#18202f] text-slate-100 transition-[width] duration-200"
+        :class="isCollapsed ? 'w-[52px]' : 'w-[210px]'"
+      >
+        <button
+          class="absolute top-1/2 -right-2.5 z-10 grid size-5 -translate-y-1/2 place-items-center rounded-full border border-white/10 bg-[#263044] text-[11px] text-slate-400 transition hover:bg-blue-500 hover:text-white"
+          type="button"
+          :aria-label="isCollapsed ? '展開側邊欄' : '收合側邊欄'"
+          @click="isCollapsed = !isCollapsed"
+        >
+          {{ isCollapsed ? '>' : '<' }}
+        </button>
+
+        <div class="border-b border-white/[0.07] px-3.5 py-[18px]">
+          <NuxtLink to="/" class="flex items-center gap-2 overflow-hidden">
+            <span class="grid size-[30px] shrink-0 place-items-center rounded-lg bg-blue-500 text-sm font-medium text-white">
+              P
+            </span>
+            <span
+              class="min-w-0 whitespace-nowrap transition-all duration-200"
+              :class="isCollapsed ? 'max-w-0 opacity-0' : 'max-w-40 opacity-100'"
+            >
+              <span class="block text-sm font-medium text-slate-100">PlanLab</span>
+              <span class="block text-[11px] text-slate-500">Investment Workspace</span>
+            </span>
           </NuxtLink>
-          <p class="mt-1 text-xs font-medium text-slate-300">Investment Workspace</p>
         </div>
 
-        <div class="mx-6 h-px bg-slate-600/70" />
-
-        <nav class="flex-1 space-y-2 px-4 py-6" aria-label="主要導覽">
+        <nav class="flex-1 space-y-0.5 px-2 py-2.5" aria-label="主要導覽">
           <NuxtLink
             v-for="item in navItems"
             :key="item.to"
             :to="item.to"
-            class="flex h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold text-slate-300 transition hover:bg-slate-700/60 hover:text-white"
-            active-class="bg-[#1f2a37] text-white"
+            class="flex items-center gap-2.5 overflow-hidden rounded-lg px-2 py-2 text-[13px] text-[#7a8fa8] transition hover:bg-white/[0.06] hover:text-slate-300"
+            active-class="bg-blue-500/15 text-blue-300"
           >
+            <span class="w-5 shrink-0 text-center text-[17px] font-semibold">{{ item.icon }}</span>
             <span
-              class="grid size-7 place-items-center rounded-md bg-slate-600 text-xs font-bold text-white"
-              :class="item.accent"
+              class="whitespace-nowrap transition-all duration-200"
+              :class="isCollapsed ? 'max-w-0 opacity-0' : 'max-w-36 opacity-100'"
             >
-              {{ item.icon }}
+              {{ item.label }}
             </span>
-            <span>{{ item.label }}</span>
           </NuxtLink>
         </nav>
 
-        <div class="mx-6 h-px bg-slate-600/70" />
-        <div class="px-7 py-6 text-xs font-medium text-slate-400">v0.2 shell</div>
+        <div class="border-t border-white/[0.07] px-2 pb-3 pt-2.5">
+          <div class="flex items-center gap-2.5 overflow-hidden rounded-lg px-2 py-2 text-[13px] text-[#7a8fa8]">
+            <span class="w-5 shrink-0 text-center text-[17px] font-semibold">S</span>
+            <span
+              class="whitespace-nowrap transition-all duration-200"
+              :class="isCollapsed ? 'max-w-0 opacity-0' : 'max-w-36 opacity-100'"
+            >
+              設定
+            </span>
+          </div>
+        </div>
       </aside>
 
-      <div class="grid min-h-screen grid-rows-[64px_1fr_72px]">
-        <header class="flex items-center justify-between border-b border-slate-200 bg-white px-7">
-          <div>
-            <p class="text-sm font-semibold text-slate-900">{{ currentTitle }}</p>
-            <p class="mt-0.5 text-xs font-medium text-slate-500">Blank main page</p>
+      <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header class="flex h-[50px] shrink-0 items-center gap-2 border-b border-slate-200 bg-white px-5">
+          <div class="flex flex-1 items-center gap-1.5 text-[13px] text-slate-500">
+            <span class="text-sm font-semibold text-slate-400">{{ currentIcon }}</span>
+            <span class="text-[11px] text-slate-300">/</span>
+            <span class="font-medium text-slate-900">{{ currentTitle }}</span>
           </div>
+          <button
+            class="grid size-[30px] place-items-center rounded-md border border-slate-200 bg-white text-base text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+            type="button"
+            aria-label="通知"
+          >
+            B
+          </button>
+          <button
+            class="grid size-7 place-items-center rounded-full bg-blue-500 text-[11px] font-medium text-white"
+            type="button"
+            aria-label="帳戶"
+          >
+            我
+          </button>
         </header>
 
-        <main class="min-h-0 bg-[#f6f8fa] p-8">
+        <main class="min-h-0 flex-1 overflow-y-auto p-5">
           <slot />
         </main>
 
-        <footer class="flex items-center justify-between border-t border-slate-200 bg-white px-7 text-sm font-medium text-slate-500">
-          <span>Footer</span>
-          <span>Status / links / metadata</span>
+        <footer class="flex h-9 shrink-0 items-center justify-between border-t border-slate-200 bg-white px-5 text-[11px] text-slate-500">
+          <span>© 2026 PlanLab. All rights reserved.</span>
+          <span>v0.3 shell</span>
         </footer>
       </div>
     </div>
@@ -56,13 +98,17 @@
 
 <script setup lang="ts">
 const route = useRoute()
+const isCollapsed = ref(false)
 
 const navItems = [
-  { to: '/', label: '首頁', icon: '首', accent: 'bg-[#24b3a7]' },
-  { to: '/stocks', label: '股票', icon: '股', accent: 'bg-slate-600' },
+  { to: '/', label: '首頁', icon: 'H' },
+  { to: '/stocks', label: '股票', icon: 'K' },
 ]
 
-const currentTitle = computed(() => {
-  return navItems.find((item) => item.to === route.path)?.label ?? '首頁'
+const activeItem = computed(() => {
+  return navItems.find((item) => item.to === route.path) ?? navItems[0]
 })
+
+const currentTitle = computed(() => activeItem.value.label)
+const currentIcon = computed(() => activeItem.value.icon)
 </script>
