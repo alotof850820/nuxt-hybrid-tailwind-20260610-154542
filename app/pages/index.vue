@@ -3,19 +3,8 @@ import IconArrowUpRight from '@tabler/icons-vue/dist/esm/icons/IconArrowUpRight.
 
 const plan = useFinancialPlan()
 
-const periodOptions = [
-  { label: '10Y', value: 10 },
-  { label: '20Y', value: 20 },
-  { label: '30Y', value: 30 },
-  { label: '全部', value: 0 },
-]
-
-const selectedPeriod = ref(0)
-
-const chartRows = computed(() => {
-  if (!selectedPeriod.value) return plan.yearlyData.value
-  return plan.yearlyData.value.filter((row) => row.year <= selectedPeriod.value)
-})
+const periodLabel = computed(() => `${plan.totalYears.value}Y`)
+const chartRows = computed(() => plan.yearlyData.value)
 
 const stockAllocation = computed(() => Math.max(plan.finalValue.value, 0))
 const houseAllocation = computed(() => (plan.buyHouse.value ? Math.max(plan.totalHouseExpense.value, 0) : 0))
@@ -64,14 +53,13 @@ useHead({
         <h2 class="card-title">資產變化趨勢</h2>
         <div class="period-tabs" aria-label="圖表期間">
           <button
-            v-for="period in periodOptions"
-            :key="period.label"
-            class="ptab"
-            :class="{ active: selectedPeriod === period.value }"
+            :aria-label="`股票頁規劃年數 ${plan.totalYears.value} 年`"
+            aria-current="true"
+            class="ptab active"
+            disabled
             type="button"
-            @click="selectedPeriod = period.value"
           >
-            {{ period.label }}
+            {{ periodLabel }}
           </button>
         </div>
       </div>

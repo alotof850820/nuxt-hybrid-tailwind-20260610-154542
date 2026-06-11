@@ -1,6 +1,18 @@
 {
   "features": [
     {
+      "id": "tabler-deep-import-types",
+      "title": "Add Types For Tabler Deep Icon Imports",
+      "status": "completed",
+      "scope": "Resolve TypeScript plugin 7016 diagnostics for direct @tabler/icons-vue ESM icon imports while keeping the optimized deep-import approach."
+    },
+    {
+      "id": "home-trend-years-reload-fix",
+      "title": "Fix Home Asset Trend Year Tab And Reload Rendering",
+      "status": "completed",
+      "scope": "Make the home asset trend chart period tab follow the planning years configured on the stocks page, prevent arbitrary fixed period choices, persist the year setting through reloads, and verify the trend chart renders after reload."
+    },
+    {
       "id": "projectionlab-dashboard-figma-layout",
       "title": "ProjectionLab-Style Figma Dashboard Layout",
       "status": "completed",

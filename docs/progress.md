@@ -138,3 +138,28 @@
 - User requested removing the stocks symbol table from the stocks page.
 - Removed the mock stock list, `ratingClass`, and the stocks table section from `app/pages/stocks.vue`, leaving KPI cards, investment settings, and contribution/withdrawal planning intact.
 - Added completed feature record `remove-stocks-symbol-table` to `docs/feature_list.json`.
+- Audited the current Nuxt app for hook/composable opportunities, focusing on financial projection state, dashboard chart/allocation behavior, stocks and house KPI derivations, range form controls, navigation shell state, annual detail rows, and Chart.js lifecycle handling.
+- User requested fixing the home `資產變化趨勢` chart disappearing after reload when the period tab was `全部`, and requiring the tab to follow the stocks page planning years instead of arbitrary period choices.
+- Added regression script `scripts/test-home-trend.mjs` and package script `npm run test:home-trend`.
+- RED verification passed as expected: `npm run test:home-trend` failed because the home trend tabs were still fixed as `10Y`, `20Y`, `30Y`, and `全部`.
+- Updated `app/pages/index.vue` so the trend tab is a single disabled active tab showing the stocks page `規劃年數` value, and the chart always uses the full projected year range.
+- Updated `app/composables/useFinancialPlan.ts` to persist `totalYears` through a Nuxt cookie, keeping reload SSR/client state aligned with the stocks page setting.
+- Updated `app/components/AssetTrendChart.client.vue` to schedule Chart.js rendering after the DOM update frame, and updated `app/assets/css/main.css` so the canvas has explicit full chart-area height.
+- Verification passed: `npm run test:home-trend`.
+- Verification passed: `npm run build`.
+- Build notes: Nuxt build completed with existing sourcemap warnings from Nuxt/Tailwind plugins and a Node deprecation warning.
+- Marked `home-trend-years-reload-fix` completed in `docs/feature_list.json`.
+- User reported TypeScript plugin 7016 for Tabler deep icon imports such as `@tabler/icons-vue/dist/esm/icons/IconArrowUpRight.mjs`.
+- Confirmed the issue is caused by optimized direct `.mjs` icon imports lacking declaration files, while build/runtime had been kept on deep imports to avoid the package barrel transforming thousands of icon modules.
+- Added `scripts/test-tabler-icon-types.mjs` and package script `npm run test:tabler-types` to typecheck all Tabler deep icon imports found in app source.
+- Verification blocked: running `npm run test:tabler-types` was rejected by the environment approval/usage gate before the RED result could be collected.
+- Added `app/types/tabler-icons-vue.d.ts` with a wildcard module declaration for `@tabler/icons-vue/dist/esm/icons/*.mjs`.
+- Left `tabler-deep-import-types` as the single active WIP in `docs/feature_list.json` pending verification.
+- User requested running CI/CD.
+- Fixed `scripts/test-tabler-icon-types.mjs` so the virtual TypeScript typecheck file path is normalized for Windows and TypeScript host lookups.
+- Verification passed: `npm run test:tabler-types` reported `Typed 10 Tabler deep icon imports.`
+- Verification passed: `TARGET_URL=http://127.0.0.1:3001 npm run test:home-trend` using the existing Nuxt dev server on port 3001.
+- Verification passed: `TARGET_URL=http://127.0.0.1:3001 npm run audit:contrast` reported `Contrast failures: 0`.
+- Verification passed: `npm run build`.
+- Build notes: Nuxt build completed with existing sourcemap warnings from Nuxt/Tailwind plugins and a Node deprecation warning.
+- Marked `tabler-deep-import-types` completed in `docs/feature_list.json`.

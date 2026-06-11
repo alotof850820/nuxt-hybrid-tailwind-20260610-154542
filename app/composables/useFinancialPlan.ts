@@ -11,10 +11,20 @@ type YearlyPlanRow = {
 }
 
 export const useFinancialPlan = () => {
+  const normalizeYears = (value: unknown) => {
+    const parsed = Number(value)
+    if (!Number.isFinite(parsed)) return 30
+    return Math.min(50, Math.max(10, Math.round(parsed)))
+  }
+  const persistedTotalYears = useCookie('planlab-total-years', {
+    default: () => 30,
+    sameSite: 'lax',
+  })
+
   const initialAmount = useState('financial-plan:initial-amount', () => 400)
   const monthlyInput = useState('financial-plan:monthly-input', () => 4)
   const returnRate = useState('financial-plan:return-rate', () => 10)
-  const totalYears = useState('financial-plan:total-years', () => 30)
+  const totalYears = useState('financial-plan:total-years', () => normalizeYears(persistedTotalYears.value))
   const stopInputYear = useState('financial-plan:stop-input-year', () => 30)
   const withdrawalAmount = useState('financial-plan:withdrawal-amount', () => 0)
   const startWithdrawalYear = useState('financial-plan:start-withdrawal-year', () => 31)
@@ -24,6 +34,14 @@ export const useFinancialPlan = () => {
   const downPayment = useState('financial-plan:down-payment', () => 300)
   const monthlyPayment = useState('financial-plan:monthly-payment', () => 3)
   const loanYears = useState('financial-plan:loan-years', () => 20)
+
+  watch(
+    totalYears,
+    (value) => {
+      persistedTotalYears.value = normalizeYears(value)
+    },
+    { immediate: true },
+  )
 
   const yearlyData = computed<YearlyPlanRow[]>(() => {
     const rows: YearlyPlanRow[] = []

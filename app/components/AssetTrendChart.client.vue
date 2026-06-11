@@ -128,8 +128,13 @@ const renderChart = () => {
   chart = new Chart(canvas.value, createConfig())
 }
 
-onMounted(renderChart)
-watch(() => props.rows, renderChart, { deep: true })
+const scheduleRenderChart = async () => {
+  await nextTick()
+  requestAnimationFrame(renderChart)
+}
+
+onMounted(scheduleRenderChart)
+watch(() => props.rows, scheduleRenderChart, { deep: true, flush: 'post' })
 onBeforeUnmount(() => chart?.destroy())
 </script>
 
