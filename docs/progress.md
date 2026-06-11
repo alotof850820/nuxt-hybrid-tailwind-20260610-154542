@@ -95,3 +95,22 @@
 - Updated global `C:\Users\User\.codex\docs\harness.md`, `PLANS.md`, `project-context.md`, and `verification-commands.md` to describe the canonical docs-based state structure and legacy root-file fallback.
 - Migrated this project state files from root to `docs/feature_list.json` and `docs/progress.md`.
 - Migrated existing plan/spec artifacts from `docs/superpowers/plans` and `docs/superpowers/specs` into canonical `docs/plans` and `docs/specs`.
+
+## 2026-06-11
+
+- User approved Option A for matching `C:\Users\User\Downloads\planlab_dashboard_v3.html` style in the local Nuxt app.
+- Installed `@tabler/icons-vue` to match the reference HTML's Tabler icon language.
+- Updated `app/layouts/default.vue` with Tabler icons for sidebar navigation, collapse control, breadcrumb, and notification button while preserving the current routes.
+- Reworked `app/assets/css/main.css` around reference-style CSS variables and shared classes for page headers, KPI cards, cards, period tabs, chart area, allocation rows, tables, tags, and range controls.
+- Updated `app/components/AssetTrendChart.client.vue` to match the reference Chart.js visual style: no legend, thin blue line, blue points, subtle Y grid, hidden borders, and compact tick/tooltip styling.
+- Updated `app/pages/index.vue` with compact total-assets KPI, period tabs, shorter Chart.js chart area, and segmented asset allocation list.
+- Updated `app/pages/stocks.vue` with reference-style KPI row, Tabler KPI delta icon, stock table, and buy/hold/watch tag colors.
+- Updated `app/pages/house.vue`, `app/pages/details.vue`, and `app/pages/settings.vue` to use the same page header, KPI, card, and table styling.
+- Added design record at `docs/specs/2026-06-11-planlab-ui-style-refresh-design.md`.
+- Verification passed: `npm install @tabler/icons-vue`.
+- Verification passed: `npm run build`.
+- Build note: changed Tabler icon imports from package barrel imports to individual ESM imports after the first build transformed thousands of icon modules; the second build transformed 173 client modules and completed successfully.
+- Runtime verification passed: `GET /`, `/stocks`, and `/house` returned HTTP 200.
+- Runtime content verification passed: `/` contained `財務成果總覽`, `總資產`, `資產變化趨勢`, `10Y`, `20Y`, `30Y`, `全部`, and `資產配置`.
+- Runtime content verification passed: `/stocks` contained `追蹤中的股票與 ETF`, `未實現損益`, `年化報酬`, `本月回報`, `TSMC`, `NVDA`, `buy`, `hold`, and `watch`.
+- Runtime content verification passed: `/house` contained `買房規劃`, `買房支出`, `頭期款`, `年房貸支出`, `貸款期間`, and `買房參數`.

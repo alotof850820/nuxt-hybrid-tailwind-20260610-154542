@@ -1,30 +1,26 @@
 <script setup lang="ts">
+import IconArrowUpRight from '@tabler/icons-vue/dist/esm/icons/IconArrowUpRight.mjs'
+
 const plan = useFinancialPlan()
 
 const stockMetrics = computed(() => [
   {
-    label: '股票資產',
-    value: `${plan.formatWan(plan.finalValue.value)} 萬`,
-    detail: `第 ${plan.totalYears.value} 年推估`,
-    tone: 'text-blue-700',
-  },
-  {
     label: '未實現損益',
     value: `${plan.netProfit.value >= 0 ? '+' : ''}${plan.formatWan(plan.netProfit.value)} 萬`,
     detail: '總資產扣除投入與提領',
-    tone: plan.netProfit.value >= 0 ? 'text-green-700' : 'text-red-700',
+    tone: plan.netProfit.value >= 0 ? 'up' : 'dn',
   },
   {
-    label: '累積投入',
-    value: `${plan.formatWan(plan.totalInput.value)} 萬`,
-    detail: `月投入 ${plan.monthlyInput.value} 萬`,
-    tone: 'text-slate-900',
+    label: '年化報酬',
+    value: `${plan.returnRate.value}%`,
+    detail: `vs 規劃基準 ${Math.max(plan.returnRate.value - 2, 0)}%`,
+    tone: 'up',
   },
   {
-    label: '定期提領',
-    value: `${plan.formatWan(plan.totalWithdrawal.value)} 萬`,
-    detail: plan.startWithdrawalYear.value > plan.totalYears.value ? '目前不提領' : `第 ${plan.startWithdrawalYear.value} 年開始`,
-    tone: 'text-slate-900',
+    label: '本月回報',
+    value: '+6.1%',
+    detail: '上月 +5.2%',
+    tone: 'text-slate-500',
   },
 ])
 
@@ -38,9 +34,9 @@ const stocks = [
 ]
 
 const ratingClass = (rating: string) => {
-  if (rating === 'buy') return 'bg-green-500/10 text-green-700'
-  if (rating === 'hold') return 'bg-blue-500/10 text-blue-700'
-  return 'bg-yellow-500/10 text-yellow-700'
+  if (rating === 'buy') return 'tag-buy'
+  if (rating === 'hold') return 'tag-hold'
+  return 'tag-watch'
 }
 
 useHead({
@@ -49,22 +45,29 @@ useHead({
 </script>
 
 <template>
-  <div class="page-shell space-y-5">
-    <header>
-      <h1 class="text-[17px] font-medium text-slate-900">股票</h1>
-      <p class="mt-1 text-xs text-slate-500">投資基本設定、投入提領規劃與追蹤股票</p>
+  <div class="page-shell space-y-4">
+    <header class="mb-[18px]">
+      <h1 class="page-title">股票</h1>
+      <p class="page-sub">追蹤中的股票與 ETF</p>
     </header>
 
-    <section class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-      <article v-for="metric in stockMetrics" :key="metric.label" class="card">
-        <p class="text-xs font-medium text-slate-500">{{ metric.label }}</p>
-        <p class="mt-1 text-2xl font-semibold" :class="metric.tone">{{ metric.value }}</p>
-        <p class="mt-2 text-xs text-slate-500">{{ metric.detail }}</p>
+    <section class="kpi-grid grid-cols-1 md:grid-cols-3">
+      <article v-for="metric in stockMetrics" :key="metric.label" class="kpi">
+        <p class="kpi-label">{{ metric.label }}</p>
+        <p class="kpi-value" :class="metric.tone === 'dn' ? 'text-red-600' : metric.tone === 'up' ? 'text-slate-900' : metric.tone">
+          {{ metric.value }}
+        </p>
+        <p class="kpi-delta" :class="metric.tone">
+          <IconArrowUpRight v-if="metric.tone === 'up'" class="size-3" :stroke="2" aria-hidden="true" />
+          {{ metric.detail }}
+        </p>
       </article>
     </section>
 
     <section class="card">
-      <h2 class="mb-4 text-[15px] font-medium text-slate-900">投資基本設定</h2>
+      <div class="card-hd">
+        <h2 class="card-title">投資基本設定</h2>
+      </div>
       <div class="grid gap-4 lg:grid-cols-3">
         <label class="range-field">
           <span>月投入：{{ plan.monthlyInput.value }} 萬（年投 {{ plan.annualInput.value }} 萬）</span>
@@ -82,7 +85,9 @@ useHead({
     </section>
 
     <section class="card">
-      <h2 class="mb-4 text-[15px] font-medium text-slate-900">投入與提領規劃</h2>
+      <div class="card-hd">
+        <h2 class="card-title">投入與提領規劃</h2>
+      </div>
       <div class="grid gap-4 lg:grid-cols-2">
         <label class="range-field">
           <span>
@@ -123,7 +128,7 @@ useHead({
             <td class="table-td" :class="stock.up ? 'text-green-600' : 'text-red-600'">{{ stock.change }}</td>
             <td class="table-td text-slate-500">{{ stock.cap }}</td>
             <td class="table-td">
-              <span class="inline-block rounded-full px-2 py-0.5 text-[10px] font-medium" :class="ratingClass(stock.rating)">
+              <span class="tag" :class="ratingClass(stock.rating)">
                 {{ stock.rating }}
               </span>
             </td>

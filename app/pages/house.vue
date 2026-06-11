@@ -31,23 +31,23 @@ useHead({
 </script>
 
 <template>
-  <div class="page-shell space-y-5">
-    <header>
-      <h1 class="text-[17px] font-medium text-slate-900">買房規劃</h1>
-      <p class="mt-1 text-xs text-slate-500">頭期款、月付與貸款年限對資產曲線的影響</p>
+  <div class="page-shell space-y-4">
+    <header class="mb-[18px]">
+      <h1 class="page-title">買房規劃</h1>
+      <p class="page-sub">頭期款、月付與貸款年限對資產曲線的影響</p>
     </header>
 
-    <section class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-      <article v-for="metric in houseMetrics" :key="metric.label" class="card">
-        <p class="text-xs font-medium text-slate-500">{{ metric.label }}</p>
-        <p class="mt-1 text-2xl font-semibold text-slate-950">{{ metric.value }}</p>
-        <p class="mt-2 text-xs text-slate-500">{{ metric.detail }}</p>
+    <section class="kpi-grid md:grid-cols-2 xl:grid-cols-4">
+      <article v-for="metric in houseMetrics" :key="metric.label" class="kpi">
+        <p class="kpi-label">{{ metric.label }}</p>
+        <p class="kpi-value">{{ metric.value }}</p>
+        <p class="kpi-delta text-slate-500">{{ metric.detail }}</p>
       </article>
     </section>
 
     <section class="card">
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-[15px] font-medium text-slate-900">買房參數</h2>
+      <div class="card-hd">
+        <h2 class="card-title">買房參數</h2>
         <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
           <input v-model="plan.buyHouse.value" class="size-4" type="checkbox">
           啟用買房規劃

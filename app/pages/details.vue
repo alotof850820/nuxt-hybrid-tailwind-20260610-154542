@@ -23,15 +23,15 @@ useHead({
 </script>
 
 <template>
-  <div class="page-shell space-y-5">
-    <header>
-      <h1 class="text-[17px] font-medium text-slate-900">年度收支明細</h1>
-      <p class="mt-1 text-xs text-slate-500">逐年檢視投入、房貸、增值、頭期與提領</p>
+  <div class="page-shell space-y-4">
+    <header class="mb-[18px]">
+      <h1 class="page-title">年度收支明細</h1>
+      <p class="page-sub">逐年檢視投入、房貸、增值、頭期與提領</p>
     </header>
 
     <section class="card max-h-[calc(100vh-160px)] overflow-auto p-0">
       <table class="w-full min-w-[900px] border-collapse text-xs">
-        <thead class="sticky top-0 bg-blue-50">
+        <thead class="sticky top-0 bg-slate-50">
           <tr>
             <th class="table-th">年份</th>
             <th class="table-th text-right">期初</th>

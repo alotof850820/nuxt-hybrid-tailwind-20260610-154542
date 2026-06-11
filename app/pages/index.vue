@@ -1,5 +1,21 @@
 <script setup lang="ts">
+import IconArrowUpRight from '@tabler/icons-vue/dist/esm/icons/IconArrowUpRight.mjs'
+
 const plan = useFinancialPlan()
+
+const periodOptions = [
+  { label: '10Y', value: 10 },
+  { label: '20Y', value: 20 },
+  { label: '30Y', value: 30 },
+  { label: '全部', value: 0 },
+]
+
+const selectedPeriod = ref(0)
+
+const chartRows = computed(() => {
+  if (!selectedPeriod.value) return plan.yearlyData.value
+  return plan.yearlyData.value.filter((row) => row.year <= selectedPeriod.value)
+})
 
 const stockAllocation = computed(() => Math.max(plan.finalValue.value, 0))
 const houseAllocation = computed(() => (plan.buyHouse.value ? Math.max(plan.totalHouseExpense.value, 0) : 0))
@@ -9,14 +25,12 @@ const allocationItems = computed(() => [
   {
     label: '股票',
     value: stockAllocation.value,
-    color: 'bg-blue-500',
-    text: 'text-blue-700',
+    color: '#3b82f6',
   },
   {
     label: '買房',
     value: houseAllocation.value,
-    color: 'bg-amber-500',
-    text: 'text-amber-700',
+    color: '#f59e0b',
   },
 ])
 
@@ -28,75 +42,71 @@ useHead({
 </script>
 
 <template>
-  <div class="page-shell space-y-5">
-    <header>
-      <h1 class="text-[17px] font-medium text-slate-900">首頁</h1>
-      <p class="mt-1 text-xs text-slate-500">總資產、資產變化趨勢與資產配置</p>
+  <div class="page-shell space-y-4">
+    <header class="mb-[18px]">
+      <h1 class="page-title">財務成果總覽</h1>
+      <p class="page-sub">總資產、資產變化趨勢與資產配置</p>
     </header>
 
-    <section class="card bg-gradient-to-br from-white to-slate-50">
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p class="text-xs font-medium uppercase text-slate-500">總資產</p>
-          <p class="mt-1 text-3xl font-semibold text-slate-950">{{ plan.formatWan(plan.finalValue.value) }} 萬</p>
-        </div>
-        <div class="rounded-lg bg-blue-50 px-3 py-2 text-right">
-          <p class="text-[11px] text-slate-500">規劃期間</p>
-          <p class="text-sm font-semibold text-blue-700">{{ plan.totalYears.value }} 年後</p>
-        </div>
-      </div>
+    <section class="kpi-grid grid-cols-1">
+      <article class="kpi">
+        <p class="kpi-label">總資產</p>
+        <p class="kpi-value">{{ plan.formatWan(plan.finalValue.value) }} 萬</p>
+        <p class="kpi-delta up">
+          <IconArrowUpRight class="size-3" :stroke="2" aria-hidden="true" />
+          規劃 {{ plan.totalYears.value }} 年後
+        </p>
+      </article>
     </section>
 
     <section class="card">
-      <div class="mb-4 flex items-center justify-between">
-        <div>
-          <h2 class="text-[15px] font-medium text-slate-900">資產變化趨勢</h2>
-          <p class="mt-1 text-xs text-slate-500">滑鼠移上圖表可查看各年度總資產</p>
+      <div class="card-hd">
+        <h2 class="card-title">資產變化趨勢</h2>
+        <div class="period-tabs" aria-label="圖表期間">
+          <button
+            v-for="period in periodOptions"
+            :key="period.label"
+            class="ptab"
+            :class="{ active: selectedPeriod === period.value }"
+            type="button"
+            @click="selectedPeriod = period.value"
+          >
+            {{ period.label }}
+          </button>
         </div>
-        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-500">
-          {{ plan.totalYears.value }} 年
-        </span>
       </div>
 
-      <div class="h-[340px]">
-        <AssetTrendChart :rows="plan.yearlyData.value" />
+      <div class="chart-area">
+        <AssetTrendChart :rows="chartRows" />
       </div>
     </section>
 
-    <section class="card">
-      <div class="mb-4 flex items-center justify-between">
-        <div>
-          <h2 class="text-[15px] font-medium text-slate-900">資產配置</h2>
-          <p class="mt-1 text-xs text-slate-500">目前分類：股票、買房</p>
-        </div>
-        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-500">2 類</span>
+    <section class="card alloc-card">
+      <div class="card-hd">
+        <h2 class="card-title">資產配置</h2>
       </div>
 
-      <div class="mb-4 flex h-2 overflow-hidden rounded-full bg-slate-100">
+      <div class="seg-row">
         <span
           v-for="item in allocationItems"
           :key="item.label"
-          class="h-full"
-          :class="item.color"
-          :style="{ width: `${allocationPercent(item.value)}%` }"
+          class="seg-bar"
+          :style="{ width: `${allocationPercent(item.value)}%`, background: item.color }"
         />
       </div>
 
-      <div class="grid gap-3 md:grid-cols-2">
-        <article
-          v-for="item in allocationItems"
-          :key="item.label"
-          class="rounded-lg border border-slate-200 bg-slate-50 p-4"
-        >
-          <div class="mb-3 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="size-2.5 rounded-full" :class="item.color" />
-              <span class="text-sm font-medium text-slate-700">{{ item.label }}</span>
-            </div>
-            <span class="text-sm font-semibold" :class="item.text">{{ allocationPercent(item.value) }}%</span>
-          </div>
-          <p class="text-2xl font-semibold text-slate-950">{{ plan.formatWan(item.value) }} 萬</p>
-        </article>
+      <div class="alloc-list">
+        <div v-for="item in allocationItems" :key="item.label" class="alloc-item">
+          <span class="alloc-dot" :style="{ background: item.color }" />
+          <span class="alloc-name">{{ item.label }}</span>
+          <span class="alloc-track">
+            <span
+              class="alloc-fill block"
+              :style="{ width: `${allocationPercent(item.value)}%`, background: item.color }"
+            />
+          </span>
+          <span class="alloc-pct">{{ allocationPercent(item.value) }}%</span>
+        </div>
       </div>
     </section>
   </div>

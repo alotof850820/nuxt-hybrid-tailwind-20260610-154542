@@ -47,6 +47,12 @@
       "title": "Centralize Workflow State Under Docs",
       "status": "completed",
       "scope": "Update global Codex workflow rules to use docs/feature_list.json, docs/progress.md, docs/specs/<feature-id>.md, and docs/plans/<feature-id>.md as canonical paths, then migrate this project state and existing plan/spec files into those docs locations."
+    },
+    {
+      "id": "planlab-ui-style-refresh",
+      "title": "Match PlanLab UI To HTML Reference Style",
+      "status": "completed",
+      "scope": "Refresh the Nuxt dashboard UI to match planlab_dashboard_v3.html, including Tabler icons, compact dashboard colors, shared KPI/card/table/tag styles, reference-like Chart.js styling, period tabs, segmented asset allocation, and consistent page styling."
     }
   ]
 }

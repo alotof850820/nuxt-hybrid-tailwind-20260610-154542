@@ -1,11 +1,21 @@
 @import "tailwindcss";
 
 :root {
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f8fafc;
+  --color-background-tertiary: #e8edf4;
+  --color-border-secondary: #cbd5e1;
+  --color-border-tertiary: #e2e8f0;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-tertiary: #94a3b8;
+  --border-radius-md: 6px;
+  --border-radius-lg: 8px;
   color-scheme: light;
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-  background: #f6f8fa;
+  background: var(--color-background-tertiary);
 }
 
 html {
@@ -16,12 +26,12 @@ html {
 body {
   min-height: 100vh;
   margin: 0;
-  background: #e8edf4;
-  color: #0f172a;
+  background: var(--color-background-tertiary);
+  color: var(--color-text-primary);
 }
 
 ::selection {
-  background: rgb(45 212 191 / 0.35);
+  background: rgb(59 130 246 / 0.24);
 }
 
 @layer components {
@@ -29,37 +39,230 @@ body {
     animation: page-fade 0.18s ease;
   }
 
+  .page-title {
+    color: var(--color-text-primary);
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .page-sub {
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    margin-top: 3px;
+  }
+
+  .kpi-grid {
+    display: grid;
+    gap: 10px;
+  }
+
+  .kpi {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 12px 14px;
+  }
+
+  .kpi-label {
+    color: var(--color-text-secondary);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+  }
+
+  .kpi-value {
+    color: var(--color-text-primary);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .kpi-delta {
+    align-items: center;
+    display: flex;
+    font-size: 11px;
+    gap: 3px;
+    margin-top: 3px;
+  }
+
+  .up {
+    color: #16a34a;
+  }
+
+  .dn {
+    color: #dc2626;
+  }
+
   .card {
-    border: 0.5px solid #e2e8f0;
-    border-radius: 10px;
-    background: #ffffff;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
     padding: 16px;
   }
 
+  .card-hd {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .card-title {
+    color: var(--color-text-primary);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .period-tabs {
+    display: flex;
+    gap: 4px;
+  }
+
+  .ptab {
+    border: 0.5px solid transparent;
+    border-radius: 5px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: 11px;
+    padding: 3px 9px;
+    transition: all 0.14s;
+  }
+
+  .ptab:hover {
+    border-color: var(--color-border-tertiary);
+    color: var(--color-text-primary);
+  }
+
+  .ptab.active {
+    background: var(--color-background-secondary);
+    border-color: var(--color-border-secondary);
+    color: var(--color-text-primary);
+  }
+
+  .chart-area {
+    height: 190px;
+    position: relative;
+    width: 100%;
+  }
+
+  .chart-area canvas {
+    width: 100% !important;
+  }
+
+  .alloc-card {
+    margin-top: 14px;
+  }
+
+  .seg-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+
+  .seg-bar {
+    border-radius: 3px;
+    flex-shrink: 0;
+    height: 6px;
+  }
+
+  .alloc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .alloc-item {
+    align-items: center;
+    display: flex;
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .alloc-dot {
+    border-radius: 50%;
+    flex-shrink: 0;
+    height: 8px;
+    width: 8px;
+  }
+
+  .alloc-name {
+    color: var(--color-text-secondary);
+    flex: 1;
+  }
+
+  .alloc-track {
+    background: var(--color-border-tertiary);
+    border-radius: 2px;
+    flex: 1;
+    height: 3px;
+    overflow: hidden;
+  }
+
+  .alloc-fill {
+    border-radius: 2px;
+    height: 100%;
+  }
+
+  .alloc-pct {
+    color: var(--color-text-primary);
+    font-weight: 500;
+    min-width: 28px;
+    text-align: right;
+  }
+
   .table-th {
-    border-bottom: 0.5px solid #e2e8f0;
-    padding: 7px 10px;
-    text-align: left;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    color: var(--color-text-secondary);
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.04em;
+    padding: 7px 10px;
+    text-align: left;
     text-transform: uppercase;
-    color: #64748b;
   }
 
   .table-td {
-    border-bottom: 0.5px solid #e2e8f0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    color: var(--color-text-primary);
     padding: 9px 10px;
     vertical-align: middle;
   }
 
+  .tag {
+    border-radius: 10px;
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+  }
+
+  .tag-buy {
+    background: rgb(22 163 74 / 0.1);
+    color: #15803d;
+  }
+
+  .tag-hold {
+    background: rgb(59 130 246 / 0.1);
+    color: #1d4ed8;
+  }
+
+  .tag-watch {
+    background: rgb(234 179 8 / 0.1);
+    color: #a16207;
+  }
+
   .range-field {
+    color: #334155;
     display: flex;
     flex-direction: column;
-    gap: 8px;
     font-size: 13px;
     font-weight: 500;
-    color: #334155;
+    gap: 8px;
+  }
+
+  .range-field input[type="range"] {
+    accent-color: #3b82f6;
   }
 
   tbody tr:last-child .table-td {
@@ -67,7 +270,7 @@ body {
   }
 
   tbody tr:hover .table-td {
-    background: #f8fafc;
+    background: var(--color-background-secondary);
   }
 }
 

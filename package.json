@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@tabler/icons-vue": "^3.44.0",
     "@tailwindcss/vite": "latest",
     "chart.js": "^4.5.1",
     "nuxt": "latest",
