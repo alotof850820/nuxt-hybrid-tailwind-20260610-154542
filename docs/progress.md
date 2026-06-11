@@ -122,3 +122,7 @@
 - Verification passed: `npm run build`.
 - Runtime content verification passed: `/` contained `財務成果總覽`, `2026年6月11日`, `總資產`, `資產變化趨勢`, and `資產配置`.
 - Runtime content verification passed: `/stocks` contained `股票`, `未實現損益`, `年化報酬`, `本月回報`, and `TSMC`.
+- User requested installing Playwright MCP before continuing UI contrast testing.
+- Confirmed `@playwright/mcp` is available from npm and verified CLI execution with `npx -y @playwright/mcp@0.0.76 --version`.
+- Registered Playwright MCP in global `C:\Users\User\.codex\config.toml` with `msedge`, `headless`, and `isolated` options so future Codex sessions can use browser automation without requiring a separate Chromium download first.
+- Added completed feature record `playwright-mcp-global-install` to `docs/feature_list.json` while keeping `projectionlab-dashboard-figma-layout` as the single active WIP item.

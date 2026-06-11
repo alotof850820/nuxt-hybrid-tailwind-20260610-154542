@@ -7,6 +7,12 @@
       "scope": "Create a PlanLab investment dashboard in the local Nuxt architecture based on the provided HTML and TSX references, including shared financial projection logic, Chart.js asset trend with hover tooltip and quantitative axes, a homepage limited to total assets/trend/allocation, stocks settings and withdrawal planning with stock metrics, settings principal control, house planning with house metrics, annual details, and documented Figma workflow."
     },
     {
+      "id": "playwright-mcp-global-install",
+      "title": "Install Playwright MCP For Browser Verification",
+      "status": "completed",
+      "scope": "Register @playwright/mcp in the global Codex config so future sessions can use Playwright MCP browser automation for UI verification, including local dashboard contrast and rendering checks."
+    },
+    {
       "id": "figma-projectionlab-layout-file",
       "title": "Create ProjectionLab-Style Figma Layout",
       "status": "completed",
