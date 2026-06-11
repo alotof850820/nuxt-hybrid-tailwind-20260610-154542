@@ -163,3 +163,11 @@
 - Verification passed: `npm run build`.
 - Build notes: Nuxt build completed with existing sourcemap warnings from Nuxt/Tailwind plugins and a Node deprecation warning.
 - Marked `tabler-deep-import-types` completed in `docs/feature_list.json`.
+- Committed verified CI changes as `2c6440f` with message `fix(ui): stabilize dashboard chart and tabler icon types`.
+- Pushed `main` to `https://github.com/alotof850820/nuxt-hybrid-tailwind-20260610-154542.git`.
+- Vercel deployment ready: `https://nuxt-hybrid-tailwind-20260610-154542-kzog7hsd9.vercel.app`.
+- Vercel production alias: `https://nuxt-hybrid-tailwind-20260610-15454.vercel.app`.
+- Vercel runtime verification passed: `GET /` returned HTTP 200 and contained `財務成果總覽`.
+- Vercel runtime verification passed: `GET /stocks` returned HTTP 200 and contained `投資基本設定`.
+- Vercel runtime verification passed: `GET /house` returned HTTP 200 and contained `買房規劃`.
+- Vercel runtime verification passed: `GET /api/health` returned HTTP 200 and contained `ok`.
