@@ -224,3 +224,9 @@
 - Verified the Vercel production URL `https://nuxt-hybrid-tailwind-20260610-15454.vercel.app/` returns HTTP 200; noted it currently reflects the `main` deployment and does not yet include the latest `dev` homepage until merged/pushed to `main`.
 - Updated `README.md` with PlanLab feature overview, usage flow, AI agent workflow, local development instructions, verification commands, technical stack, and project structure.
 - Added completed feature record `readme-planlab-ai-agent-overview` to `docs/feature_list.json`.
+- User requested pushing `dev`, merging into `main`, and going live on Vercel.
+- Pre-merge verification on `dev` passed: `npm run test:tabler-types`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, and `npm run build`.
+- Pushed `dev` to `origin/dev`, checked out `main`, pulled `origin/main`, and fast-forward merged `dev` into `main`.
+- Post-merge verification on `main` passed: `npm run test:tabler-types`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, and `npm run build`.
+- Pushed `main` to `origin/main`, triggering Vercel production deployment.
+- Verified `https://nuxt-hybrid-tailwind-20260610-15454.vercel.app/` returns HTTP 200 and contains the new landing marker `Build Financial Plans You Love`.
