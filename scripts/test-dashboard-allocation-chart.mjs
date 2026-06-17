@@ -23,6 +23,15 @@ for (const text of ['資產配置', '配置總額', '本金', '股票']) {
 const chartCanvas = page.locator('canvas[aria-label*="資產配置圓餅圖"]')
 await chartCanvas.waitFor({ state: 'visible' })
 
+const totalAssetsText = await page.locator('.kpi').filter({ hasText: '總資產' }).locator('.kpi-value').first().textContent()
+const allocationTotalText = await page.locator('.alloc-total-label').first().textContent()
+
+const totalAssetsAmount = totalAssetsText?.replace(/\s/g, '')
+const allocationTotalAmount = allocationTotalText?.replace('配置總額', '').replace(/\s/g, '')
+if (totalAssetsAmount !== allocationTotalAmount) {
+  await fail(`Expected total assets and allocation total to match, got ${totalAssetsAmount} and ${allocationTotalAmount}`)
+}
+
 const chartLabel = await chartCanvas.getAttribute('aria-label')
 for (const text of ['總額', '本金', '股票', '股票內含', '投入成本', '資本利得']) {
   if (!chartLabel?.includes(text)) {

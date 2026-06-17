@@ -7,9 +7,12 @@ const periodLabel = computed(() => `${plan.totalYears.value}Y`)
 const chartRows = computed(() => plan.yearlyData.value)
 
 const principalAllocation = computed(() => Math.max(plan.initialAmount.value, 0))
-const stockAllocation = computed(() => Math.max(plan.finalValue.value, 0))
-const allocationTotal = computed(() => principalAllocation.value + stockAllocation.value)
+const stockAllocation = computed(() => Math.max(plan.finalValue.value - principalAllocation.value, 0))
+const allocationTotal = computed(() => plan.finalValue.value)
 const allocationPercentBase = computed(() => Math.max(allocationTotal.value, 1))
+const stockAdditionalInvestedCost = computed(() => {
+  return Math.min(Math.max(plan.stockContributedCapital.value - plan.initialAmount.value, 0), stockAllocation.value)
+})
 const allocationItems = computed(() => [
   {
     label: '本金',
@@ -20,10 +23,16 @@ const allocationItems = computed(() => [
     label: '股票',
     value: stockAllocation.value,
     color: '#3b82f6',
-    details: plan.stockAssetBreakdown.value.map((item) => ({
-      label: item.label,
-      value: item.value,
-    })),
+    details: [
+      {
+        label: '投入成本',
+        value: stockAdditionalInvestedCost.value,
+      },
+      {
+        label: '資本利得',
+        value: Math.max(stockAllocation.value - stockAdditionalInvestedCost.value, 0),
+      },
+    ],
   },
 ])
 

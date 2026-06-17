@@ -257,3 +257,8 @@
 - Updated `AssetAllocationChart` items to support per-slice detail rows in Chart.js tooltips and accessible chart labels.
 - Updated dashboard allocation data to use `本金` and `股票` as the main slices, with the `股票` slice carrying invested-cost and capital-gain detail percentages.
 - Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, `npm run test:tabler-types`, and `npm run build`.
+- User noticed total assets and allocation total did not match.
+- Root cause: dashboard allocation total was computed as `initialAmount + finalValue`, while the KPI total assets used `finalValue`; this double-counted principal by 400 萬.
+- Added regression coverage comparing dashboard total asset text against allocation total text; RED run showed `15,231萬` vs `15,631萬`.
+- Fixed dashboard allocation total to use `finalValue`, with `股票` as `finalValue - 本金`; stock hover details now split the stock slice into additional invested cost and capital gains so the detail percentages sum to the stock slice.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, `npm run test:tabler-types`, and `npm run build`.
