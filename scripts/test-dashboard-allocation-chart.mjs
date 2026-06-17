@@ -33,7 +33,7 @@ if (totalAssetsAmount !== allocationTotalAmount) {
 }
 
 const chartLabel = await chartCanvas.getAttribute('aria-label')
-for (const text of ['總額', '本金', '股票', '股票內含', '投入成本', '資本利得']) {
+for (const text of ['總額', '本金', '股票', '股票細節', '投入成本', '資本利得']) {
   if (!chartLabel?.includes(text)) {
     await fail(`Expected allocation chart label to include ${text}, got: ${chartLabel}`)
   }
@@ -75,6 +75,27 @@ const stockDetailLabel = await stockDetailCanvas.getAttribute('aria-label')
 for (const text of ['總額', '投入成本', '資本利得']) {
   if (!stockDetailLabel?.includes(text)) {
     await fail(`Expected stock detail chart label to include ${text}, got: ${stockDetailLabel}`)
+  }
+}
+
+await page.getByRole('link', { name: /買房規劃/ }).click()
+await page.getByLabel('啟用買房規劃').check()
+await page.getByRole('link', { name: /首頁/ }).click()
+
+for (const text of ['買房事件', '頭期款', '負債配置', '剩餘房貸', '已支付房貸']) {
+  await page.getByText(text, { exact: false }).first().waitFor({ state: 'visible' })
+}
+
+const trendCanvasWithHouseEvent = page.locator('canvas[aria-label*="買房事件"]')
+await trendCanvasWithHouseEvent.waitFor({ state: 'visible' })
+
+const debtChartCanvas = page.locator('canvas[aria-label*="負債配置圓餅圖"]')
+await debtChartCanvas.waitFor({ state: 'visible' })
+
+const debtChartLabel = await debtChartCanvas.getAttribute('aria-label')
+for (const text of ['總額', '剩餘房貸', '已支付房貸']) {
+  if (!debtChartLabel?.includes(text)) {
+    await fail(`Expected debt chart label to include ${text}, got: ${debtChartLabel}`)
   }
 }
 

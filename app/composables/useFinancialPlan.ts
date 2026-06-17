@@ -10,6 +10,13 @@ type YearlyPlanRow = {
   houseLoan: number
 }
 
+type PlanEvent = {
+  year: number
+  label: string
+  amount: number
+  detail: string
+}
+
 export const useFinancialPlan = () => {
   const normalizeYears = (value: unknown) => {
     const parsed = Number(value)
@@ -123,16 +130,53 @@ export const useFinancialPlan = () => {
     return yearlyData.value.reduce((sum, row) => sum + row.downPayment + row.houseLoan, 0)
   })
   const totalOtherExpense = computed(() => 0)
+  const totalMortgageLiability = computed(() => {
+    return buyHouse.value ? Math.round(monthlyPayment.value * 12 * loanYears.value * 10) / 10 : 0
+  })
+  const paidMortgageLiability = computed(() => {
+    if (!buyHouse.value) return 0
+
+    const paidYears = Math.min(Math.max(totalYears.value - houseYear.value + 1, 0), loanYears.value)
+    return Math.round(monthlyPayment.value * 12 * paidYears * 10) / 10
+  })
+  const remainingMortgageLiability = computed(() => {
+    return Math.round(Math.max(totalMortgageLiability.value - paidMortgageLiability.value, 0) * 10) / 10
+  })
+  const housePlanEvents = computed<PlanEvent[]>(() => {
+    if (!buyHouse.value) return []
+
+    return [
+      {
+        year: houseYear.value,
+        label: '買房事件',
+        amount: downPayment.value,
+        detail: `頭期款 ${formatWan(downPayment.value)} 萬，年房貸 ${formatWan(monthlyPayment.value * 12)} 萬`,
+      },
+    ]
+  })
   const finalValue = computed(() => yearlyData.value.at(-1)?.value ?? initialAmount.value)
-  const stockInvestedAssetValue = computed(() => Math.min(stockContributedCapital.value, finalValue.value))
+  const stockPrincipalAssetValue = computed(() => Math.min(initialAmount.value, finalValue.value))
+  const stockAdditionalInvestedAssetValue = computed(() => {
+    const availableValue = Math.max(finalValue.value - stockPrincipalAssetValue.value, 0)
+    const additionalCapital = Math.max(stockContributedCapital.value - initialAmount.value, 0)
+    return Math.min(additionalCapital, availableValue)
+  })
+  const stockInvestedAssetValue = computed(() => {
+    return Math.min(stockContributedCapital.value, finalValue.value)
+  })
   const stockCapitalGain = computed(() => {
     return Math.round(Math.max(finalValue.value - stockContributedCapital.value, 0) * 10) / 10
   })
   const stockAssetBreakdown = computed(() => [
     {
-      label: '投入成本',
-      value: stockInvestedAssetValue.value,
+      label: '本金',
+      value: stockPrincipalAssetValue.value,
       color: '#22c55e',
+    },
+    {
+      label: '投入成本',
+      value: stockAdditionalInvestedAssetValue.value,
+      color: '#f59e0b',
     },
     {
       label: '資本利得',
@@ -168,6 +212,10 @@ export const useFinancialPlan = () => {
     totalWithdrawal,
     totalHouseExpense,
     totalOtherExpense,
+    totalMortgageLiability,
+    paidMortgageLiability,
+    remainingMortgageLiability,
+    housePlanEvents,
     finalValue,
     netProfit,
     formatWan,

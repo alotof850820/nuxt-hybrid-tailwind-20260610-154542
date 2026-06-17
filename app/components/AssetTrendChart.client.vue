@@ -10,6 +10,7 @@ import {
   PointElement,
   Tooltip,
   type ChartConfiguration,
+  type Plugin,
 } from 'chart.js'
 
 type TrendRow = {
@@ -17,8 +18,16 @@ type TrendRow = {
   value: number
 }
 
+type TrendEvent = {
+  year: number
+  label: string
+  amount: number
+  detail: string
+}
+
 const props = defineProps<{
   rows: TrendRow[]
+  events?: TrendEvent[]
 }>()
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip, Legend)
@@ -27,6 +36,70 @@ const canvas = ref<HTMLCanvasElement | null>(null)
 let chart: Chart<'line'> | null = null
 
 const formatWan = (value: number) => `${Math.round(value).toLocaleString()} 萬`
+
+const trendLabel = computed(() => {
+  const eventText = props.events?.length
+    ? `，${props.events.map((event) => `${event.label} 第 ${event.year} 年 ${event.detail}`).join('，')}`
+    : ''
+
+  return `資產變化趨勢${eventText}`
+})
+
+const houseEventPlugin: Plugin<'line'> = {
+  id: 'houseEventMarker',
+  afterDatasetsDraw: (chartInstance) => {
+    const events = props.events ?? []
+    if (!events.length) return
+
+    const { ctx, chartArea, scales } = chartInstance
+    const xScale = scales.x
+    const yScale = scales.y
+    if (!chartArea || !xScale || !yScale) return
+
+    for (const event of events) {
+      const rowIndex = props.rows.findIndex((row) => row.year === event.year)
+      if (rowIndex < 0) continue
+
+      const row = props.rows[rowIndex]
+      const x = xScale.getPixelForValue(rowIndex)
+      const y = yScale.getPixelForValue(row.value)
+
+      ctx.save()
+      ctx.strokeStyle = 'rgba(245, 158, 11, 0.82)'
+      ctx.lineWidth = 1
+      ctx.setLineDash([4, 4])
+      ctx.beginPath()
+      ctx.moveTo(x, chartArea.top)
+      ctx.lineTo(x, chartArea.bottom)
+      ctx.stroke()
+      ctx.setLineDash([])
+
+      ctx.fillStyle = '#f59e0b'
+      ctx.strokeStyle = '#272826'
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.arc(x, y, 5, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.stroke()
+
+      const label = event.label
+      ctx.font = '600 11px Inter, ui-sans-serif, system-ui, sans-serif'
+      const labelWidth = ctx.measureText(label).width + 14
+      const labelX = Math.min(Math.max(x - labelWidth / 2, chartArea.left), chartArea.right - labelWidth)
+      const labelY = Math.max(chartArea.top + 6, y - 34)
+      ctx.fillStyle = '#1d1e1b'
+      ctx.strokeStyle = 'rgba(245, 158, 11, 0.7)'
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.roundRect(labelX, labelY, labelWidth, 22, 6)
+      ctx.fill()
+      ctx.stroke()
+      ctx.fillStyle = '#fde68a'
+      ctx.fillText(label, labelX + 7, labelY + 14)
+      ctx.restore()
+    }
+  },
+}
 
 const createConfig = (): ChartConfiguration<'line'> => ({
   type: 'line',
@@ -66,6 +139,14 @@ const createConfig = (): ChartConfiguration<'line'> => ({
         borderColor: 'rgba(193, 202, 216, 0.34)',
         borderWidth: 1,
         callbacks: {
+          afterBody: (items) => {
+            const rowIndex = items[0]?.dataIndex
+            if (rowIndex == null) return []
+
+            const row = props.rows[rowIndex]
+            const events = props.events?.filter((event) => event.year === row?.year) ?? []
+            return events.map((event) => `${event.label}: ${event.detail}`)
+          },
           label: (context) => `總資產 ${formatWan(Number(context.parsed.y ?? 0))}`,
           title: (items) => items[0]?.label ?? '',
         },
@@ -113,6 +194,7 @@ const createConfig = (): ChartConfiguration<'line'> => ({
       },
     },
   },
+  plugins: [houseEventPlugin],
 })
 
 const renderChart = () => {
@@ -139,5 +221,5 @@ onBeforeUnmount(() => chart?.destroy())
 </script>
 
 <template>
-  <canvas ref="canvas" aria-label="資產變化趨勢" role="img" />
+  <canvas ref="canvas" :aria-label="trendLabel" role="img" />
 </template>

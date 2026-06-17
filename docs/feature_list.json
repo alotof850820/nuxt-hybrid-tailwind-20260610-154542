@@ -1,6 +1,12 @@
 {
   "features": [
     {
+      "id": "dashboard-house-event-and-debt-visualization",
+      "title": "Visualize House Event And Mortgage Debt On Dashboard",
+      "status": "completed",
+      "scope": "When house planning is enabled, show a house-purchase event marker in the dashboard asset trend, surface the event details below the chart, and add a dashboard mortgage debt doughnut chart with remaining and paid mortgage amounts."
+    },
+    {
       "id": "stock-asset-breakdown-visualization",
       "title": "Visualize Stock Invested Cost And Capital Gain",
       "status": "completed",

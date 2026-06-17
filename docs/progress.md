@@ -236,6 +236,12 @@
 - Updated `app/pages/dashboard.vue` asset allocation section to show a doughnut chart, total allocation amount, stock/house values, progress bars, and percentages.
 - Updated dashboard allocation responsive CSS so the chart and quantified list fit desktop and mobile layouts.
 - Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, `npm run test:tabler-types`, and `npm run build`.
+- User requested dashboard visualizations for enabled house planning: an event marker in the asset trend and a mortgage debt doughnut chart on the dashboard.
+- Added RED Playwright coverage to enable house planning through `/house`, return to `/dashboard`, and require visible `買房事件`, `頭期款`, `負債配置`, `剩餘房貸`, and `已支付房貸`; RED failed because `買房事件` was missing.
+- Added shared mortgage liability computed values and `housePlanEvents` to `useFinancialPlan`.
+- Updated `AssetTrendChart` to accept event markers, draw a house-purchase marker and vertical line on the Chart.js canvas, and expose event details in tooltip and aria label.
+- Updated dashboard to render the house event chip below the trend chart and show a `負債配置` doughnut chart with remaining and paid mortgage amounts when house planning is enabled.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, `npm run test:tabler-types`, and `npm run build` outside the sandbox after the sandboxed build hit the known OneDrive `readlink 'C:\Users\User'` EPERM issue.
 - User requested adding principal display to the dashboard asset allocation area.
 - Extended `scripts/test-dashboard-allocation-chart.mjs` to require `本金` and the default `400 萬` principal value; RED run failed because the principal summary did not exist.
 - Added a principal summary row inside the dashboard asset allocation card using `plan.initialAmount`, plus a percentage note comparing principal to the allocation total without adding principal into the allocation chart slices.

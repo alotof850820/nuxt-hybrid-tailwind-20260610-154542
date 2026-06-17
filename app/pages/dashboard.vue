@@ -5,14 +5,12 @@ const plan = useFinancialPlan()
 
 const periodLabel = computed(() => `${plan.totalYears.value}Y`)
 const chartRows = computed(() => plan.yearlyData.value)
+const trendEvents = computed(() => plan.housePlanEvents.value)
 
 const principalAllocation = computed(() => Math.max(plan.initialAmount.value, 0))
 const stockAllocation = computed(() => Math.max(plan.finalValue.value - principalAllocation.value, 0))
 const allocationTotal = computed(() => plan.finalValue.value)
 const allocationPercentBase = computed(() => Math.max(allocationTotal.value, 1))
-const stockAdditionalInvestedCost = computed(() => {
-  return Math.min(Math.max(plan.stockContributedCapital.value - plan.initialAmount.value, 0), stockAllocation.value)
-})
 const allocationItems = computed(() => [
   {
     label: '本金',
@@ -23,21 +21,27 @@ const allocationItems = computed(() => [
     label: '股票',
     value: stockAllocation.value,
     color: '#3b82f6',
-    details: [
-      {
-        label: '投入成本',
-        value: stockAdditionalInvestedCost.value,
-      },
-      {
-        label: '資本利得',
-        value: Math.max(stockAllocation.value - stockAdditionalInvestedCost.value, 0),
-      },
-    ],
+    details: plan.stockAssetBreakdown.value.map(({ label, value }) => ({ label, value })),
   },
 ])
 
 const allocationPercent = (value: number) => Math.round((value / allocationPercentBase.value) * 100)
 const allocationAmount = (value: number) => `${plan.formatWan(value)} 萬`
+const debtTotal = computed(() => plan.totalMortgageLiability.value)
+const debtPercentBase = computed(() => Math.max(debtTotal.value, 1))
+const debtItems = computed(() => [
+  {
+    label: '剩餘房貸',
+    value: plan.remainingMortgageLiability.value,
+    color: '#ef4444',
+  },
+  {
+    label: '已支付房貸',
+    value: plan.paidMortgageLiability.value,
+    color: '#f59e0b',
+  },
+])
+const debtPercent = (value: number) => Math.round((value / debtPercentBase.value) * 100)
 
 useHead({
   title: '儀表板 | PlanLab',
@@ -79,7 +83,14 @@ useHead({
       </div>
 
       <div class="chart-area">
-        <AssetTrendChart :rows="chartRows" />
+        <AssetTrendChart :events="trendEvents" :rows="chartRows" />
+      </div>
+      <div v-if="trendEvents.length" class="event-list">
+        <div v-for="event in trendEvents" :key="`${event.label}-${event.year}`" class="event-chip">
+          <span class="event-dot" />
+          <span class="event-title">{{ event.label }}</span>
+          <span class="event-meta">第 {{ event.year }} 年 · {{ event.detail }}</span>
+        </div>
       </div>
     </section>
 
@@ -109,6 +120,38 @@ useHead({
               />
             </span>
             <span class="alloc-pct">{{ allocationPercent(item.value) }}%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section v-if="plan.buyHouse.value && debtTotal > 0" class="card alloc-card">
+      <div class="card-hd">
+        <h2 class="card-title">負債配置</h2>
+        <p class="alloc-total-label">房貸總額 {{ allocationAmount(debtTotal) }}</p>
+      </div>
+
+      <div class="alloc-visual">
+        <div class="alloc-chart-wrap">
+          <AssetAllocationChart
+            :items="debtItems"
+            title="負債配置圓餅圖"
+            :total="debtTotal"
+          />
+        </div>
+
+        <div class="alloc-list">
+          <div v-for="item in debtItems" :key="item.label" class="alloc-item">
+            <span class="alloc-dot" :style="{ background: item.color }" />
+            <span class="alloc-name">{{ item.label }}</span>
+            <span class="alloc-amount">{{ allocationAmount(item.value) }}</span>
+            <span class="alloc-track">
+              <span
+                class="alloc-fill block"
+                :style="{ width: `${debtPercent(item.value)}%`, background: item.color }"
+              />
+            </span>
+            <span class="alloc-pct">{{ debtPercent(item.value) }}%</span>
           </div>
         </div>
       </div>

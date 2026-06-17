@@ -95,8 +95,14 @@ const createConfig = (): ChartConfiguration<'doughnut'> => ({
             const lines = [`${context.label}: ${formatWan(value)} (${pct}%)`]
 
             if (item?.details?.length) {
+              const detailBase = Math.max(
+                item.details.reduce((sum, detail) => sum + Math.max(detail.value, 0), 0),
+                value,
+                1,
+              )
+
               for (const detail of item.details) {
-                const detailPct = value > 0 ? Math.round((detail.value / value) * 100) : 0
+                const detailPct = Math.round((detail.value / detailBase) * 100)
                 lines.push(`${detail.label}: ${formatWan(detail.value)} (${detailPct}%)`)
               }
             }
@@ -140,9 +146,14 @@ const allocationLabel = computed(() => {
       const pct = props.total > 0 ? Math.round((item.value / props.total) * 100) : 0
       const details =
         item.details?.length
-          ? `，${item.label}內含 ${item.details
-              .map((detail) => {
-                const detailPct = item.value > 0 ? Math.round((detail.value / item.value) * 100) : 0
+          ? `，${item.label}細節 ${item.details
+              .map((detail, _, details) => {
+                const detailBase = Math.max(
+                  details.reduce((sum, current) => sum + Math.max(current.value, 0), 0),
+                  item.value,
+                  1,
+                )
+                const detailPct = Math.round((detail.value / detailBase) * 100)
                 return `${detail.label} ${formatWan(detail.value)} ${detailPct}%`
               })
               .join('，')}`
