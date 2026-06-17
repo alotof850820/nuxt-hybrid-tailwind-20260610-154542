@@ -1,12 +1,17 @@
 export const useAppMeta = () => ({
-  name: 'Nuxt SSR / SPA Hybrid',
-  description: 'SSR by default, SPA where route rules ask for it, styled with Tailwind CSS.',
+  name: 'PlanLab',
+  description: 'Financial planning workspace for investments, home planning, and long-term projections.',
   stack: ['Nuxt', 'Vue', 'Nitro', 'Vite', 'Tailwind CSS'],
   routes: [
     {
       path: '/',
       mode: 'SSR',
-      description: 'Server-rendered landing page with Nitro API data.',
+      description: 'ProjectionLab-inspired landing page with a Start planning path into the app.',
+    },
+    {
+      path: '/dashboard',
+      mode: 'SSR',
+      description: 'Server-rendered financial planning dashboard.',
     },
     {
       path: '/spa',

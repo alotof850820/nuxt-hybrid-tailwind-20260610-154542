@@ -196,3 +196,27 @@
 - Verified current changes for Tabler icon numeric prop typing and workflow records.
 - Verification passed: `npm run test:tabler-types` reported `Typed 10 Tabler deep icon imports.`
 - Verification passed: `npm run build` after rerunning outside the sandbox; the sandboxed run was blocked by `EPERM: operation not permitted, readlink 'C:\Users\User'`.
+- User requested a ProjectionLab-style homepage where `Start planning` enters the current app functionality.
+- Reviewed `https://projectionlab.com/` as a UI/layout reference and noted the landing-page structure: dark hero, compact navigation, CTA, and dashboard preview visual.
+- Started local visual companion; first sandboxed localhost server failed with `listen EACCES`, then restarted outside the sandbox at `http://localhost:53951`.
+- User selected visual option A: make `/` a marketing landing page and move current dashboard functionality to `/dashboard`.
+- Added design spec at `docs/specs/2026-06-17-projectionlab-homepage-entry-design.md`.
+- Added in-progress feature record `projectionlab-style-homepage-entry` to `docs/feature_list.json`.
+- Added `.superpowers/` to `.gitignore` for visual companion scratch files.
+- Added implementation plan at `docs/plans/projectionlab-style-homepage-entry.md`.
+- Added focused Playwright route test `scripts/test-homepage-entry.mjs` and package script `npm run test:homepage-entry`.
+- RED verification passed as expected: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry` failed before implementation because `Start planning` was not visible on `/`.
+- Added `app/pages/dashboard.vue` by moving the previous homepage dashboard functionality to `/dashboard`.
+- Replaced `app/pages/index.vue` with a standalone ProjectionLab-style PlanLab landing page using `definePageMeta({ layout: false })`, dark hero, top navigation, `Start planning` CTA, and native CSS dashboard preview.
+- Updated `app/layouts/default.vue` so sidebar `首頁` points to `/dashboard`.
+- Updated `nuxt.config.ts` and `app/composables/useAppMeta.ts` from starter metadata to PlanLab metadata, added SSR route rule for `/dashboard`, and disabled Nuxt DevTools to remove the dev overlay from the homepage.
+- Updated `scripts/test-home-trend.mjs` so the chart reload regression follows the moved dashboard route at `/dashboard`.
+- Updated `scripts/audit-contrast.mjs` to include `/dashboard` while still auditing the new `/` landing page.
+- Fixed three landing preview label contrast failures by darkening preview label text in `app/pages/index.vue`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast` reported `Contrast failures: 0`.
+- Verification passed: `npm run build` outside the sandbox after the sandboxed run failed with known `EPERM: operation not permitted, readlink 'C:\Users\User'`.
+- Runtime verification passed against `http://127.0.0.1:3100`: `/`, `/dashboard`, `/stocks`, `/house`, `/details`, and `/settings` each returned HTTP 200 with expected content markers.
+- Visual sanity verification passed: Playwright desktop/mobile screenshots showed the landing brand, CTA, product preview, no horizontal overflow, and no Nuxt DevTools overlay.
+- Marked `projectionlab-style-homepage-entry` completed in `docs/feature_list.json`.

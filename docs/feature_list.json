@@ -1,6 +1,12 @@
 {
   "features": [
     {
+      "id": "projectionlab-style-homepage-entry",
+      "title": "Add ProjectionLab-Style Homepage Entry",
+      "status": "completed",
+      "scope": "Create a ProjectionLab-inspired PlanLab landing homepage at /, move the current dashboard functionality to /dashboard, and make Start planning enter the existing financial planning app."
+    },
+    {
       "id": "dev-branch-disable-vercel-deploy",
       "title": "Create Dev Branch Without Vercel Auto Deploy",
       "status": "completed",

@@ -7,8 +7,10 @@ dist
 .env
 .env.*
 !.env.example
-.nuxt-dev.log
-.nuxt-dev.err.log
+.nuxt-dev*.log
+.nuxt-dev*.err.log
+.nuxt-dev*.pid
 npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
+.superpowers/

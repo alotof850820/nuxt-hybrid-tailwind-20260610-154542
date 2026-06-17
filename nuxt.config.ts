@@ -2,22 +2,23 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   ssr: true,
   css: ['~/assets/css/main.css'],
   app: {
     head: {
-      title: 'Nuxt SSR / SPA Hybrid',
+      title: 'PlanLab',
       meta: [
         {
           name: 'description',
-          content: 'A Nuxt starter with SSR defaults, SPA route rules, and Tailwind CSS.',
+          content: 'PlanLab helps you model investments, home planning, and long-term asset projections.',
         },
       ],
     },
   },
   routeRules: {
     '/': { ssr: true },
+    '/dashboard': { ssr: true },
     '/spa/**': { ssr: false },
     '/api/**': { cors: true },
   },

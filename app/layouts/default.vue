@@ -117,7 +117,7 @@ const route = useRoute()
 const isCollapsed = ref(false)
 
 const navItems = [
-  { to: '/', label: '首頁', icon: IconLayoutDashboard },
+  { to: '/dashboard', label: '首頁', icon: IconLayoutDashboard },
   { to: '/stocks', label: '股票', icon: IconChartCandle },
   { to: '/house', label: '買房規劃', icon: IconBuildingBank },
   { to: '/details', label: '明細', icon: IconListDetails },

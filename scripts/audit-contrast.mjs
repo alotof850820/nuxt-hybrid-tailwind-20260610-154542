@@ -1,7 +1,7 @@
 import { chromium } from '@playwright/test'
 
 const baseUrl = process.env.TARGET_URL ?? 'http://127.0.0.1:3000'
-const routes = ['/', '/stocks', '/house', '/details', '/settings']
+const routes = ['/', '/dashboard', '/stocks', '/house', '/details', '/settings']
 const maxFailures = Number(process.env.CONTRAST_MAX_FAILURES ?? '0')
 
 const browser = await chromium.launch({

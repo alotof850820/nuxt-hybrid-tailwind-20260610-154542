@@ -8,6 +8,7 @@
     "dev": "nuxt dev --host 0.0.0.0",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
+    "test:homepage-entry": "node scripts/test-homepage-entry.mjs",
     "test:tabler-types": "node scripts/test-tabler-icon-types.mjs",
     "test:home-trend": "node scripts/test-home-trend.mjs",
     "postinstall": "nuxt prepare"
