@@ -25,10 +25,16 @@ const props = defineProps<{
   total: number
 }>()
 
+const emit = defineEmits<{
+  'hover:item': [label: string | null]
+}>()
+
 Chart.register(DoughnutController, ArcElement, Tooltip, Legend)
 
 const canvas = ref<HTMLCanvasElement | null>(null)
+const animatedTotal = ref(props.total)
 let chart: Chart<'doughnut'> | null = null
+let totalAnimationFrame = 0
 
 const formatWan = (value: number) => `${Math.round(value).toLocaleString()} 萬`
 
@@ -49,7 +55,7 @@ const centerTextPlugin: Plugin<'doughnut'> = {
     ctx.fillText('總額', centerX, centerY - 10)
     ctx.fillStyle = '#f8fafc'
     ctx.font = '600 17px Inter, ui-sans-serif, system-ui, sans-serif'
-    ctx.fillText(formatWan(props.total), centerX, centerY + 11)
+    ctx.fillText(formatWan(animatedTotal.value), centerX, centerY + 11)
     ctx.restore()
   },
 }
@@ -74,9 +80,16 @@ const createConfig = (): ChartConfiguration<'doughnut'> => ({
   type: 'doughnut',
   data: chartData(),
   options: {
-    animation: false,
+    animation: {
+      duration: 460,
+      easing: 'easeOutQuart',
+    },
     cutout: '68%',
     maintainAspectRatio: false,
+    onHover: (_event, elements) => {
+      const activeItem = elements[0] ? props.items[elements[0].index] : null
+      emit('hover:item', activeItem?.label ?? null)
+    },
     responsive: true,
     plugins: {
       legend: {
@@ -134,6 +147,31 @@ const renderChart = () => {
   chart = new Chart(canvas.value, createConfig())
 }
 
+const animateTotal = (nextTotal: number) => {
+  cancelAnimationFrame(totalAnimationFrame)
+
+  const startTotal = animatedTotal.value
+  const startedAt = performance.now()
+  const duration = 520
+
+  const tick = (timestamp: number) => {
+    const progress = Math.min((timestamp - startedAt) / duration, 1)
+    const eased = 1 - Math.pow(1 - progress, 4)
+    animatedTotal.value = startTotal + (nextTotal - startTotal) * eased
+    chart?.draw()
+
+    if (progress < 1) {
+      totalAnimationFrame = requestAnimationFrame(tick)
+      return
+    }
+
+    animatedTotal.value = nextTotal
+    chart?.draw()
+  }
+
+  totalAnimationFrame = requestAnimationFrame(tick)
+}
+
 const scheduleRenderChart = async () => {
   await nextTick()
   requestAnimationFrame(renderChart)
@@ -167,9 +205,14 @@ const allocationLabel = computed(() => {
 })
 
 watch(() => [props.items, props.total], scheduleRenderChart, { deep: true, flush: 'post' })
-onBeforeUnmount(() => chart?.destroy())
+watch(() => props.total, (nextTotal) => animateTotal(nextTotal))
+onBeforeUnmount(() => {
+  cancelAnimationFrame(totalAnimationFrame)
+  emit('hover:item', null)
+  chart?.destroy()
+})
 </script>
 
 <template>
-  <canvas ref="canvas" :aria-label="allocationLabel" role="img" />
+  <canvas ref="canvas" :aria-label="allocationLabel" data-count-up="true" role="img" />
 </template>

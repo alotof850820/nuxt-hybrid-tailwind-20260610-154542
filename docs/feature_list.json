@@ -1,6 +1,12 @@
 {
   "features": [
     {
+      "id": "dashboard-judgment-focused-animations",
+      "title": "Add Judgment-Focused Dashboard Animations",
+      "status": "completed",
+      "scope": "Add high-quality but non-distracting animations for dashboard data interpretation: smooth house event trend updates, event tag pulse, doughnut chart count-up and hover/list highlight, and animated house-planning impact reveal."
+    },
+    {
       "id": "dashboard-house-event-tag-hitbox-drag",
       "title": "Restrict House Event Dragging To Event Tag Hitbox",
       "status": "completed",

@@ -251,6 +251,14 @@
 - Added RED Playwright coverage requiring the chart body and blank areas to use `cursor: default`, rejecting drags outside the tag, and finding `cursor: grab` only inside the event tag hitbox before dragging to year 10.
 - Updated `AssetTrendChart` to record event tag hitboxes during Chart.js plugin drawing and use those rectangles for cursor state and pointer-down drag eligibility.
 - Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, `npm run test:tabler-types`, and `npm run build` outside the sandbox after the sandboxed build hit the known OneDrive `readlink 'C:\Users\User'` EPERM issue.
+- User approved Phase 1 animation work focused on data interpretation rather than decoration.
+- Added RED Playwright coverage for trend animation metadata, event tag pulse after dragging, doughnut count-up metadata, and allocation chart hover/list highlighting.
+- Implemented Chart.js doughnut animation, center total count-up, hover emit from doughnut charts, dashboard/stocks list highlighting, event tag pulse, dashboard house impact transitions, and reduced-motion CSS safeguards.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, and `npm run test:tabler-types`.
+- Verification blocked: sandboxed `npm run build` again reached Nitro's final packaging phase and failed on the known OneDrive `EPERM: operation not permitted, readlink 'C:\Users\User'`; the sandbox-outside rerun request was rejected by the platform usage limit, so the animation feature remains `in_progress` and uncommitted pending a successful build.
+- User requested continuing after the usage gate interruption.
+- Verification passed: escalated `npm run build` completed successfully outside the sandbox after the known OneDrive sandbox `readlink 'C:\Users\User'` failure.
+- Marked `dashboard-judgment-focused-animations` completed in `docs/feature_list.json`.
 - User requested adding principal display to the dashboard asset allocation area.
 - Extended `scripts/test-dashboard-allocation-chart.mjs` to require `本金` and the default `400 萬` principal value; RED run failed because the principal summary did not exist.
 - Added a principal summary row inside the dashboard asset allocation card using `plan.initialAmount`, plus a percentage note comparing principal to the allocation total without adding principal into the allocation chart slices.

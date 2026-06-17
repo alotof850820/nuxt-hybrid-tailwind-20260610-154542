@@ -48,8 +48,10 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryS
 const canvas = ref<HTMLCanvasElement | null>(null)
 const isDraggingEvent = ref(false)
 const isPointerOverEventTag = ref(false)
+const eventLineProgress = ref(1)
 let chart: Chart<'line'> | null = null
 let eventHitboxes: EventHitbox[] = []
+let eventLineAnimationFrame = 0
 
 const formatWan = (value: number) => `${Math.round(value).toLocaleString()} 萬`
 const minDraggableYear = computed(() => Math.max(props.rows[1]?.year ?? 1, 1))
@@ -96,7 +98,7 @@ const houseEventPlugin: Plugin<'line'> = {
       ctx.setLineDash([4, 4])
       ctx.beginPath()
       ctx.moveTo(x, chartArea.top)
-      ctx.lineTo(x, chartArea.bottom)
+      ctx.lineTo(x, chartArea.top + (chartArea.bottom - chartArea.top) * eventLineProgress.value)
       ctx.stroke()
       ctx.setLineDash([])
 
@@ -159,7 +161,10 @@ const createConfig = (): ChartConfiguration<'line'> => ({
     ],
   },
   options: {
-    animation: false,
+    animation: {
+      duration: 420,
+      easing: 'easeOutQuart',
+    },
     maintainAspectRatio: false,
     responsive: true,
     interaction: {
@@ -240,7 +245,7 @@ const renderChart = () => {
   if (chart) {
     chart.data.labels = props.rows.map((row) => `第 ${row.year} 年`)
     chart.data.datasets[0].data = props.rows.map((row) => Math.round(row.value))
-    chart.update()
+    chart.update(isDraggingEvent.value ? 'none' : undefined)
     return
   }
 
@@ -320,6 +325,29 @@ const handlePointerUp = (event: PointerEvent) => {
   canvas.value?.releasePointerCapture(event.pointerId)
 }
 
+const animateEventLineIn = () => {
+  cancelAnimationFrame(eventLineAnimationFrame)
+  eventLineProgress.value = 0
+  const startedAt = performance.now()
+  const duration = 360
+
+  const tick = (timestamp: number) => {
+    const progress = Math.min((timestamp - startedAt) / duration, 1)
+    eventLineProgress.value = 1 - Math.pow(1 - progress, 3)
+    chart?.draw()
+
+    if (progress < 1) {
+      eventLineAnimationFrame = requestAnimationFrame(tick)
+      return
+    }
+
+    eventLineProgress.value = 1
+    chart?.draw()
+  }
+
+  eventLineAnimationFrame = requestAnimationFrame(tick)
+}
+
 const scheduleRenderChart = async () => {
   await nextTick()
   requestAnimationFrame(renderChart)
@@ -327,13 +355,24 @@ const scheduleRenderChart = async () => {
 
 onMounted(scheduleRenderChart)
 watch(() => [props.rows, props.events], scheduleRenderChart, { deep: true, flush: 'post' })
-onBeforeUnmount(() => chart?.destroy())
+watch(
+  () => props.events?.length ?? 0,
+  (eventCount, previousCount) => {
+    if (eventCount > 0 && previousCount === 0) animateEventLineIn()
+    if (eventCount === 0) eventLineProgress.value = 1
+  },
+)
+onBeforeUnmount(() => {
+  cancelAnimationFrame(eventLineAnimationFrame)
+  chart?.destroy()
+})
 </script>
 
 <template>
   <canvas
     ref="canvas"
     :aria-label="trendLabel"
+    data-trend-animation="smooth-event"
     :style="{ cursor: isDraggingEvent ? 'grabbing' : isPointerOverEventTag ? 'grab' : 'default' }"
     role="img"
     @pointerdown="handlePointerDown"

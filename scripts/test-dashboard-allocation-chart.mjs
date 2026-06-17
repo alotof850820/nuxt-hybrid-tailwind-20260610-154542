@@ -88,6 +88,9 @@ for (const text of ['買房事件', '頭期款', '負債配置', '剩餘房貸',
 
 const trendCanvasWithHouseEvent = page.locator('canvas[aria-label*="買房事件"]')
 await trendCanvasWithHouseEvent.waitFor({ state: 'visible' })
+if ((await trendCanvasWithHouseEvent.getAttribute('data-trend-animation')) !== 'smooth-event') {
+  await fail('Expected asset trend chart to declare smooth event animation behavior.')
+}
 await page.getByText('第 5 年', { exact: false }).first().waitFor({ state: 'visible' })
 
 const trendCanvasBox = await trendCanvasWithHouseEvent.boundingBox()
@@ -143,6 +146,7 @@ await page.mouse.move(dragTargetX, tagPoint.y, { steps: 8 })
 await page.mouse.up()
 
 await page.getByText('第 10 年', { exact: false }).first().waitFor({ state: 'visible' })
+await page.locator('.event-chip.is-pulsing').first().waitFor({ state: 'visible' })
 const draggedTrendLabel = await trendCanvasWithHouseEvent.getAttribute('aria-label')
 if (!draggedTrendLabel?.includes('買房事件 第 10 年')) {
   await fail(`Expected dragging house event to update the trend chart label to year 10, got: ${draggedTrendLabel}`)
@@ -150,6 +154,9 @@ if (!draggedTrendLabel?.includes('買房事件 第 10 年')) {
 
 const debtChartCanvas = page.locator('canvas[aria-label*="負債配置圓餅圖"]')
 await debtChartCanvas.waitFor({ state: 'visible' })
+if ((await debtChartCanvas.getAttribute('data-count-up')) !== 'true') {
+  await fail('Expected debt allocation chart center total to use count-up animation.')
+}
 
 const debtChartLabel = await debtChartCanvas.getAttribute('aria-label')
 for (const text of ['總額', '剩餘房貸', '已支付房貸']) {
@@ -157,5 +164,10 @@ for (const text of ['總額', '剩餘房貸', '已支付房貸']) {
     await fail(`Expected debt chart label to include ${text}, got: ${debtChartLabel}`)
   }
 }
+
+const allocationChartBox = await chartCanvas.boundingBox()
+if (!allocationChartBox) await fail('Expected asset allocation chart bounding box for hover highlight.')
+await page.mouse.move(allocationChartBox.x + allocationChartBox.width * 0.86, allocationChartBox.y + allocationChartBox.height / 2)
+await page.locator('.alloc-item.is-active').first().waitFor({ state: 'visible' })
 
 await browser.close()

@@ -42,12 +42,28 @@ const debtItems = computed(() => [
   },
 ])
 const debtPercent = (value: number) => Math.round((value / debtPercentBase.value) * 100)
+const activeAllocationLabel = ref<string | null>(null)
+const activeDebtLabel = ref<string | null>(null)
+const pulsingEventYear = ref<number | null>(null)
+let pulseTimer: ReturnType<typeof setTimeout> | null = null
+
 const updateHouseEventYear = (year: number) => {
+  if (plan.houseYear.value === year) return
+
   plan.houseYear.value = year
+  pulsingEventYear.value = year
+  if (pulseTimer) clearTimeout(pulseTimer)
+  pulseTimer = setTimeout(() => {
+    pulsingEventYear.value = null
+  }, 760)
 }
 
 useHead({
   title: '儀表板 | PlanLab',
+})
+
+onBeforeUnmount(() => {
+  if (pulseTimer) clearTimeout(pulseTimer)
 })
 </script>
 
@@ -88,13 +104,20 @@ useHead({
       <div class="chart-area">
         <AssetTrendChart :events="trendEvents" :rows="chartRows" @update:event-year="updateHouseEventYear" />
       </div>
-      <div v-if="trendEvents.length" class="event-list">
-        <div v-for="event in trendEvents" :key="`${event.label}-${event.year}`" class="event-chip">
-          <span class="event-dot" />
-          <span class="event-title">{{ event.label }}</span>
-          <span class="event-meta">第 {{ event.year }} 年 · {{ event.detail }}</span>
+      <Transition name="impact-reveal">
+        <div v-if="trendEvents.length" class="event-list">
+          <div
+            v-for="event in trendEvents"
+            :key="`${event.label}-${event.year}`"
+            class="event-chip"
+            :class="{ 'is-pulsing': pulsingEventYear === event.year }"
+          >
+            <span class="event-dot" />
+            <span class="event-title">{{ event.label }}</span>
+            <span class="event-meta">第 {{ event.year }} 年 · {{ event.detail }}</span>
+          </div>
         </div>
-      </div>
+      </Transition>
     </section>
 
     <section class="card alloc-card">
@@ -108,11 +131,17 @@ useHead({
           <AssetAllocationChart
             :items="allocationItems"
             :total="allocationTotal"
+            @hover:item="activeAllocationLabel = $event"
           />
         </div>
 
         <div class="alloc-list">
-          <div v-for="item in allocationItems" :key="item.label" class="alloc-item">
+          <div
+            v-for="item in allocationItems"
+            :key="item.label"
+            class="alloc-item"
+            :class="{ 'is-active': activeAllocationLabel === item.label }"
+          >
             <span class="alloc-dot" :style="{ background: item.color }" />
             <span class="alloc-name">{{ item.label }}</span>
             <span class="alloc-amount">{{ allocationAmount(item.value) }}</span>
@@ -128,36 +157,44 @@ useHead({
       </div>
     </section>
 
-    <section v-if="plan.buyHouse.value && debtTotal > 0" class="card alloc-card">
-      <div class="card-hd">
-        <h2 class="card-title">負債配置</h2>
-        <p class="alloc-total-label">房貸總額 {{ allocationAmount(debtTotal) }}</p>
-      </div>
-
-      <div class="alloc-visual">
-        <div class="alloc-chart-wrap">
-          <AssetAllocationChart
-            :items="debtItems"
-            title="負債配置圓餅圖"
-            :total="debtTotal"
-          />
+    <Transition name="impact-reveal">
+      <section v-if="plan.buyHouse.value && debtTotal > 0" class="card alloc-card">
+        <div class="card-hd">
+          <h2 class="card-title">負債配置</h2>
+          <p class="alloc-total-label">房貸總額 {{ allocationAmount(debtTotal) }}</p>
         </div>
 
-        <div class="alloc-list">
-          <div v-for="item in debtItems" :key="item.label" class="alloc-item">
-            <span class="alloc-dot" :style="{ background: item.color }" />
-            <span class="alloc-name">{{ item.label }}</span>
-            <span class="alloc-amount">{{ allocationAmount(item.value) }}</span>
-            <span class="alloc-track">
-              <span
-                class="alloc-fill block"
-                :style="{ width: `${debtPercent(item.value)}%`, background: item.color }"
-              />
-            </span>
-            <span class="alloc-pct">{{ debtPercent(item.value) }}%</span>
+        <div class="alloc-visual">
+          <div class="alloc-chart-wrap">
+            <AssetAllocationChart
+              :items="debtItems"
+              title="負債配置圓餅圖"
+              :total="debtTotal"
+              @hover:item="activeDebtLabel = $event"
+            />
+          </div>
+
+          <div class="alloc-list">
+            <div
+              v-for="item in debtItems"
+              :key="item.label"
+              class="alloc-item"
+              :class="{ 'is-active': activeDebtLabel === item.label }"
+            >
+              <span class="alloc-dot" :style="{ background: item.color }" />
+              <span class="alloc-name">{{ item.label }}</span>
+              <span class="alloc-amount">{{ allocationAmount(item.value) }}</span>
+              <span class="alloc-track">
+                <span
+                  class="alloc-fill block"
+                  :style="{ width: `${debtPercent(item.value)}%`, background: item.color }"
+                />
+              </span>
+              <span class="alloc-pct">{{ debtPercent(item.value) }}%</span>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </Transition>
   </div>
 </template>

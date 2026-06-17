@@ -6,6 +6,7 @@ const plan = useFinancialPlan()
 const stockDetailItems = computed(() => plan.stockAssetBreakdown.value)
 const stockDetailTotal = computed(() => plan.finalValue.value)
 const stockDetailPercentBase = computed(() => Math.max(stockDetailTotal.value, 1))
+const activeStockDetailLabel = ref<string | null>(null)
 
 const stockDetailPercent = (value: number) => Math.round((value / stockDetailPercentBase.value) * 100)
 const stockDetailAmount = (value: number) => `${plan.formatWan(value)} 萬`
@@ -68,11 +69,17 @@ useHead({
             :items="stockDetailItems"
             title="股票資產細節圓餅圖"
             :total="stockDetailTotal"
+            @hover:item="activeStockDetailLabel = $event"
           />
         </div>
 
         <div class="alloc-list">
-          <div v-for="item in stockDetailItems" :key="item.label" class="alloc-item">
+          <div
+            v-for="item in stockDetailItems"
+            :key="item.label"
+            class="alloc-item"
+            :class="{ 'is-active': activeStockDetailLabel === item.label }"
+          >
             <span class="alloc-dot" :style="{ background: item.color }" />
             <span class="alloc-name">{{ item.label }}</span>
             <span class="alloc-amount">{{ stockDetailAmount(item.value) }}</span>
