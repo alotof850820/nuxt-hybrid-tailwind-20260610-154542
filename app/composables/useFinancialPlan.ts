@@ -24,7 +24,7 @@ export const useFinancialPlan = () => {
     return Math.min(50, Math.max(10, Math.round(parsed)))
   }
   const persistedTotalYears = useCookie('planlab-total-years', {
-    default: () => 30,
+    default: () => 10,
     sameSite: 'lax',
   })
 
@@ -36,7 +36,7 @@ export const useFinancialPlan = () => {
   const withdrawalAmount = useState('financial-plan:withdrawal-amount', () => 0)
   const startWithdrawalYear = useState('financial-plan:start-withdrawal-year', () => 31)
 
-  const buyHouse = useState('financial-plan:buy-house', () => false)
+  const buyHouse = useState('financial-plan:buy-house', () => true)
   const houseYear = useState('financial-plan:house-year', () => 5)
   const downPayment = useState('financial-plan:down-payment', () => 300)
   const monthlyPayment = useState('financial-plan:monthly-payment', () => 3)

@@ -96,23 +96,29 @@ await page.getByText('第 5 年', { exact: false }).first().waitFor({ state: 'vi
 const trendCanvasBox = await trendCanvasWithHouseEvent.boundingBox()
 if (!trendCanvasBox) await fail('Expected trend chart canvas bounding box for dragging house event.')
 
-const dragStartX = trendCanvasBox.x + trendCanvasBox.width * (5 / 30)
-const dragTargetX = trendCanvasBox.x + trendCanvasBox.width * (11 / 30)
+const periodText = await page.locator('.period-tabs .ptab').first().textContent()
+const totalYears = Number(periodText?.replace(/\D/g, '')) || 30
+const dragStartYear = 5
+const dragTargetYear = Math.min(10, totalYears)
+const dragStartX = trendCanvasBox.x + trendCanvasBox.width * (dragStartYear / totalYears)
+const dragTargetX = trendCanvasBox.x + trendCanvasBox.width * (dragTargetYear / totalYears)
 const dragY = trendCanvasBox.y + trendCanvasBox.height / 2
+const blankX = trendCanvasBox.x + trendCanvasBox.width - 8
+const blankY = trendCanvasBox.y + trendCanvasBox.height - 8
 
-await page.mouse.move(trendCanvasBox.x + trendCanvasBox.width - 8, trendCanvasBox.y + trendCanvasBox.height - 8)
+await page.mouse.move(blankX, blankY)
 const outsideCursor = await trendCanvasWithHouseEvent.evaluate((canvas) => getComputedStyle(canvas).cursor)
 if (outsideCursor !== 'default') {
   await fail(`Expected cursor outside the house event tag to be default, got: ${outsideCursor}`)
 }
 
-await page.mouse.move(dragStartX, dragY)
+await page.mouse.move(blankX, blankY)
 const chartBodyCursor = await trendCanvasWithHouseEvent.evaluate((canvas) => getComputedStyle(canvas).cursor)
 if (chartBodyCursor !== 'default') {
   await fail(`Expected cursor away from the house event tag to be default, got: ${chartBodyCursor}`)
 }
 await page.mouse.down()
-await page.mouse.move(dragTargetX, dragY, { steps: 8 })
+await page.mouse.move(dragTargetX, blankY, { steps: 8 })
 await page.mouse.up()
 await page.waitForTimeout(120)
 
@@ -145,11 +151,11 @@ await page.mouse.down()
 await page.mouse.move(dragTargetX, tagPoint.y, { steps: 8 })
 await page.mouse.up()
 
-await page.getByText('第 10 年', { exact: false }).first().waitFor({ state: 'visible' })
+await page.getByText(`第 ${dragTargetYear} 年`, { exact: false }).first().waitFor({ state: 'visible' })
 await page.locator('.event-chip.is-pulsing').first().waitFor({ state: 'visible' })
 const draggedTrendLabel = await trendCanvasWithHouseEvent.getAttribute('aria-label')
-if (!draggedTrendLabel?.includes('買房事件 第 10 年')) {
-  await fail(`Expected dragging house event to update the trend chart label to year 10, got: ${draggedTrendLabel}`)
+if (!draggedTrendLabel?.includes(`買房事件 第 ${dragTargetYear} 年`)) {
+  await fail(`Expected dragging house event to update the trend chart label to year ${dragTargetYear}, got: ${draggedTrendLabel}`)
 }
 
 const debtChartCanvas = page.locator('canvas[aria-label*="負債配置圓餅圖"]')

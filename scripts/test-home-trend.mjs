@@ -23,7 +23,7 @@ const setRangeValue = async (locator, value) => {
 }
 
 const expectCanvasPainted = async () => {
-  const painted = await page.locator('canvas[aria-label="資產變化趨勢"]').evaluate((canvas) => {
+  const painted = await page.locator('canvas[aria-label*="資產變化趨勢"]').evaluate((canvas) => {
     const context = canvas.getContext('2d')
     if (!context || canvas.width === 0 || canvas.height === 0) return false
 
