@@ -1,6 +1,12 @@
 {
   "features": [
     {
+      "id": "dashboard-house-event-tag-hitbox-drag",
+      "title": "Restrict House Event Dragging To Event Tag Hitbox",
+      "status": "completed",
+      "scope": "Limit dashboard house event dragging and grab cursor behavior to the visible event tag rectangle so future overlapping events have distinct drag handles."
+    },
+    {
       "id": "dashboard-draggable-house-event",
       "title": "Drag Dashboard House Event To Update Purchase Year",
       "status": "completed",

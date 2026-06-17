@@ -96,9 +96,50 @@ if (!trendCanvasBox) await fail('Expected trend chart canvas bounding box for dr
 const dragStartX = trendCanvasBox.x + trendCanvasBox.width * (5 / 30)
 const dragTargetX = trendCanvasBox.x + trendCanvasBox.width * (11 / 30)
 const dragY = trendCanvasBox.y + trendCanvasBox.height / 2
+
+await page.mouse.move(trendCanvasBox.x + trendCanvasBox.width - 8, trendCanvasBox.y + trendCanvasBox.height - 8)
+const outsideCursor = await trendCanvasWithHouseEvent.evaluate((canvas) => getComputedStyle(canvas).cursor)
+if (outsideCursor !== 'default') {
+  await fail(`Expected cursor outside the house event tag to be default, got: ${outsideCursor}`)
+}
+
 await page.mouse.move(dragStartX, dragY)
+const chartBodyCursor = await trendCanvasWithHouseEvent.evaluate((canvas) => getComputedStyle(canvas).cursor)
+if (chartBodyCursor !== 'default') {
+  await fail(`Expected cursor away from the house event tag to be default, got: ${chartBodyCursor}`)
+}
 await page.mouse.down()
 await page.mouse.move(dragTargetX, dragY, { steps: 8 })
+await page.mouse.up()
+await page.waitForTimeout(120)
+
+const nonTagDraggedTrendLabel = await trendCanvasWithHouseEvent.getAttribute('aria-label')
+if (!nonTagDraggedTrendLabel?.includes('買房事件 第 5 年')) {
+  await fail(`Expected dragging outside the house event tag to keep year 5, got: ${nonTagDraggedTrendLabel}`)
+}
+
+let tagPoint = null
+for (const yRatio of [0.08, 0.14, 0.2, 0.26, 0.32, 0.38, 0.44, 0.5, 0.58, 0.64, 0.7, 0.76]) {
+  for (const xOffset of [-65, -52, -39, -26, -13, 0, 13, 26, 39, 52, 65, 78]) {
+    const x = dragStartX + xOffset
+    const y = trendCanvasBox.y + trendCanvasBox.height * yRatio
+    await page.mouse.move(x, y)
+    const cursor = await trendCanvasWithHouseEvent.evaluate((canvas) => getComputedStyle(canvas).cursor)
+    if (cursor === 'grab') {
+      tagPoint = { x, y }
+      break
+    }
+  }
+  if (tagPoint) break
+}
+
+if (!tagPoint) {
+  await fail('Expected cursor to become grab inside the house event tag hitbox.')
+}
+
+await page.mouse.move(tagPoint.x, tagPoint.y)
+await page.mouse.down()
+await page.mouse.move(dragTargetX, tagPoint.y, { steps: 8 })
 await page.mouse.up()
 
 await page.getByText('第 10 年', { exact: false }).first().waitFor({ state: 'visible' })

@@ -25,6 +25,15 @@ type TrendEvent = {
   detail: string
 }
 
+type EventHitbox = {
+  x: number
+  y: number
+  width: number
+  height: number
+  label: string
+  year: number
+}
+
 const props = defineProps<{
   rows: TrendRow[]
   events?: TrendEvent[]
@@ -38,7 +47,9 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryS
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 const isDraggingEvent = ref(false)
+const isPointerOverEventTag = ref(false)
 let chart: Chart<'line'> | null = null
+let eventHitboxes: EventHitbox[] = []
 
 const formatWan = (value: number) => `${Math.round(value).toLocaleString()} 萬`
 const minDraggableYear = computed(() => Math.max(props.rows[1]?.year ?? 1, 1))
@@ -56,12 +67,20 @@ const houseEventPlugin: Plugin<'line'> = {
   id: 'houseEventMarker',
   afterDatasetsDraw: (chartInstance) => {
     const events = props.events ?? []
-    if (!events.length) return
+    if (!events.length) {
+      eventHitboxes = []
+      return
+    }
 
     const { ctx, chartArea, scales } = chartInstance
     const xScale = scales.x
     const yScale = scales.y
-    if (!chartArea || !xScale || !yScale) return
+    if (!chartArea || !xScale || !yScale) {
+      eventHitboxes = []
+      return
+    }
+
+    const nextHitboxes: EventHitbox[] = []
 
     for (const event of events) {
       const rowIndex = props.rows.findIndex((row) => row.year === event.year)
@@ -94,17 +113,28 @@ const houseEventPlugin: Plugin<'line'> = {
       const labelWidth = ctx.measureText(label).width + 14
       const labelX = Math.min(Math.max(x - labelWidth / 2, chartArea.left), chartArea.right - labelWidth)
       const labelY = Math.max(chartArea.top + 6, y - 34)
+      const labelHeight = 22
+      nextHitboxes.push({
+        x: labelX,
+        y: labelY,
+        width: labelWidth,
+        height: labelHeight,
+        label: event.label,
+        year: event.year,
+      })
       ctx.fillStyle = '#1d1e1b'
       ctx.strokeStyle = 'rgba(245, 158, 11, 0.7)'
       ctx.lineWidth = 1
       ctx.beginPath()
-      ctx.roundRect(labelX, labelY, labelWidth, 22, 6)
+      ctx.roundRect(labelX, labelY, labelWidth, labelHeight, 6)
       ctx.fill()
       ctx.stroke()
       ctx.fillStyle = '#fde68a'
       ctx.fillText(label, labelX + 7, labelY + 14)
       ctx.restore()
     }
+
+    eventHitboxes = nextHitboxes
   },
 }
 
@@ -232,20 +262,28 @@ const yearFromPointerEvent = (event: PointerEvent) => {
   return props.rows[rowIndex]?.year ?? rowIndex
 }
 
-const isPointerNearEvent = (event: PointerEvent) => {
-  if (!chart || !canvas.value || !props.events?.length) return false
+const pointerPosition = (event: PointerEvent) => {
+  if (!canvas.value) return null
 
   const bounds = canvas.value.getBoundingClientRect()
-  const pointerX = event.clientX - bounds.left
-  const xScale = chart.scales.x
-  if (!xScale) return false
+  return {
+    x: event.clientX - bounds.left,
+    y: event.clientY - bounds.top,
+  }
+}
 
-  return props.events.some((trendEvent) => {
-    const rowIndex = props.rows.findIndex((row) => row.year === trendEvent.year)
-    if (rowIndex < 0) return false
+const hitboxFromPointerEvent = (event: PointerEvent) => {
+  const pointer = pointerPosition(event)
+  if (!pointer) return null
 
-    return Math.abs(pointerX - xScale.getPixelForValue(rowIndex)) <= 72
-  })
+  return eventHitboxes.find((hitbox) => {
+    return (
+      pointer.x >= hitbox.x &&
+      pointer.x <= hitbox.x + hitbox.width &&
+      pointer.y >= hitbox.y &&
+      pointer.y <= hitbox.y + hitbox.height
+    )
+  }) ?? null
 }
 
 const updateEventYearFromPointer = (event: PointerEvent) => {
@@ -256,15 +294,19 @@ const updateEventYearFromPointer = (event: PointerEvent) => {
 }
 
 const handlePointerDown = (event: PointerEvent) => {
-  if (!isPointerNearEvent(event)) return
+  if (!hitboxFromPointerEvent(event)) return
 
   isDraggingEvent.value = true
+  isPointerOverEventTag.value = true
   canvas.value?.setPointerCapture(event.pointerId)
   updateEventYearFromPointer(event)
 }
 
 const handlePointerMove = (event: PointerEvent) => {
-  if (!isDraggingEvent.value) return
+  if (!isDraggingEvent.value) {
+    isPointerOverEventTag.value = Boolean(hitboxFromPointerEvent(event))
+    return
+  }
 
   updateEventYearFromPointer(event)
 }
@@ -274,6 +316,7 @@ const handlePointerUp = (event: PointerEvent) => {
 
   updateEventYearFromPointer(event)
   isDraggingEvent.value = false
+  isPointerOverEventTag.value = Boolean(hitboxFromPointerEvent(event))
   canvas.value?.releasePointerCapture(event.pointerId)
 }
 
@@ -291,7 +334,7 @@ onBeforeUnmount(() => chart?.destroy())
   <canvas
     ref="canvas"
     :aria-label="trendLabel"
-    :style="{ cursor: props.events?.length ? (isDraggingEvent ? 'grabbing' : 'grab') : 'default' }"
+    :style="{ cursor: isDraggingEvent ? 'grabbing' : isPointerOverEventTag ? 'grab' : 'default' }"
     role="img"
     @pointerdown="handlePointerDown"
     @pointerleave="handlePointerUp"
