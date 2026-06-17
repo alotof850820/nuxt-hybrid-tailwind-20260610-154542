@@ -16,7 +16,7 @@ const fail = async (message) => {
 
 await page.goto(new URL('/dashboard', baseUrl).toString(), { waitUntil: 'networkidle' })
 
-for (const text of ['資產配置', '配置總額', '投入成本', '資本利得']) {
+for (const text of ['資產配置', '配置總額', '本金', '股票']) {
   await page.getByText(text, { exact: false }).first().waitFor({ state: 'visible' })
 }
 
@@ -24,7 +24,7 @@ const chartCanvas = page.locator('canvas[aria-label*="資產配置圓餅圖"]')
 await chartCanvas.waitFor({ state: 'visible' })
 
 const chartLabel = await chartCanvas.getAttribute('aria-label')
-for (const text of ['總額', '投入成本', '資本利得']) {
+for (const text of ['總額', '本金', '股票', '股票內含', '投入成本', '資本利得']) {
   if (!chartLabel?.includes(text)) {
     await fail(`Expected allocation chart label to include ${text}, got: ${chartLabel}`)
   }

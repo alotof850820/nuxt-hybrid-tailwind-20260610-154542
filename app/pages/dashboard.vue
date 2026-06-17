@@ -6,9 +6,26 @@ const plan = useFinancialPlan()
 const periodLabel = computed(() => `${plan.totalYears.value}Y`)
 const chartRows = computed(() => plan.yearlyData.value)
 
-const allocationTotal = computed(() => plan.finalValue.value)
+const principalAllocation = computed(() => Math.max(plan.initialAmount.value, 0))
+const stockAllocation = computed(() => Math.max(plan.finalValue.value, 0))
+const allocationTotal = computed(() => principalAllocation.value + stockAllocation.value)
 const allocationPercentBase = computed(() => Math.max(allocationTotal.value, 1))
-const allocationItems = computed(() => plan.stockAssetBreakdown.value)
+const allocationItems = computed(() => [
+  {
+    label: '本金',
+    value: principalAllocation.value,
+    color: '#22c55e',
+  },
+  {
+    label: '股票',
+    value: stockAllocation.value,
+    color: '#3b82f6',
+    details: plan.stockAssetBreakdown.value.map((item) => ({
+      label: item.label,
+      value: item.value,
+    })),
+  },
+])
 
 const allocationPercent = (value: number) => Math.round((value / allocationPercentBase.value) * 100)
 const allocationAmount = (value: number) => `${plan.formatWan(value)} 萬`

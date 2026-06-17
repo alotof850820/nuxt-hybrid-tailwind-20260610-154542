@@ -253,3 +253,7 @@
 - Added shared `stockContributedCapital`, `stockInvestedAssetValue`, `stockCapitalGain`, and `stockAssetBreakdown` computed values in `useFinancialPlan`.
 - Updated dashboard allocation to use the shared stock breakdown slices and updated stocks page with a quantified `股票資產細節` doughnut chart plus matching value/percentage list.
 - Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, `npm run test:tabler-types`, and `npm run build`.
+- User clarified that dashboard asset allocation should have `本金` and `股票` as the main slices, and hovering the `股票` slice should show `資本利得` and `投入成本` percentages.
+- Updated `AssetAllocationChart` items to support per-slice detail rows in Chart.js tooltips and accessible chart labels.
+- Updated dashboard allocation data to use `本金` and `股票` as the main slices, with the `股票` slice carrying invested-cost and capital-gain detail percentages.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, `npm run test:tabler-types`, and `npm run build`.

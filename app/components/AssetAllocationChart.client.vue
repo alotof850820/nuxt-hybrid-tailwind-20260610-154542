@@ -13,6 +13,10 @@ type AllocationItem = {
   label: string
   value: number
   color: string
+  details?: {
+    label: string
+    value: number
+  }[]
 }
 
 const props = defineProps<{
@@ -87,7 +91,17 @@ const createConfig = (): ChartConfiguration<'doughnut'> => ({
           label: (context) => {
             const value = Number(context.parsed ?? 0)
             const pct = props.total > 0 ? Math.round((value / props.total) * 100) : 0
-            return `${context.label}: ${formatWan(value)} (${pct}%)`
+            const item = props.items[context.dataIndex]
+            const lines = [`${context.label}: ${formatWan(value)} (${pct}%)`]
+
+            if (item?.details?.length) {
+              for (const detail of item.details) {
+                const detailPct = value > 0 ? Math.round((detail.value / value) * 100) : 0
+                lines.push(`${detail.label}: ${formatWan(detail.value)} (${detailPct}%)`)
+              }
+            }
+
+            return lines
           },
         },
         displayColors: true,
@@ -124,7 +138,17 @@ const allocationLabel = computed(() => {
   const itemLabels = props.items
     .map((item) => {
       const pct = props.total > 0 ? Math.round((item.value / props.total) * 100) : 0
-      return `${item.label} ${formatWan(item.value)} ${pct}%`
+      const details =
+        item.details?.length
+          ? `，${item.label}內含 ${item.details
+              .map((detail) => {
+                const detailPct = item.value > 0 ? Math.round((detail.value / item.value) * 100) : 0
+                return `${detail.label} ${formatWan(detail.value)} ${detailPct}%`
+              })
+              .join('，')}`
+          : ''
+
+      return `${item.label} ${formatWan(item.value)} ${pct}%${details}`
     })
     .join('，')
 
