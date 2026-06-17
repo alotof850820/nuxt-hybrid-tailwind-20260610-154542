@@ -3,12 +3,19 @@ import IconArrowUpRight from '@tabler/icons-vue/dist/esm/icons/IconArrowUpRight.
 
 const plan = useFinancialPlan()
 
+const stockDetailItems = computed(() => plan.stockAssetBreakdown.value)
+const stockDetailTotal = computed(() => plan.finalValue.value)
+const stockDetailPercentBase = computed(() => Math.max(stockDetailTotal.value, 1))
+
+const stockDetailPercent = (value: number) => Math.round((value / stockDetailPercentBase.value) * 100)
+const stockDetailAmount = (value: number) => `${plan.formatWan(value)} 萬`
+
 const stockMetrics = computed(() => [
   {
-    label: '未實現損益',
-    value: `${plan.netProfit.value >= 0 ? '+' : ''}${plan.formatWan(plan.netProfit.value)} 萬`,
-    detail: '總資產扣除投入與提領',
-    tone: plan.netProfit.value >= 0 ? 'up' : 'dn',
+    label: '資本利得',
+    value: `+${plan.formatWan(plan.stockCapitalGain.value)} 萬`,
+    detail: `投入成本 ${plan.formatWan(plan.stockContributedCapital.value)} 萬`,
+    tone: plan.stockCapitalGain.value >= 0 ? 'up' : 'dn',
   },
   {
     label: '年化報酬',
@@ -47,6 +54,38 @@ useHead({
           {{ metric.detail }}
         </p>
       </article>
+    </section>
+
+    <section class="card alloc-card">
+      <div class="card-hd">
+        <h2 class="card-title">股票資產細節</h2>
+        <p class="alloc-total-label">股票總額 {{ stockDetailAmount(stockDetailTotal) }}</p>
+      </div>
+
+      <div class="alloc-visual">
+        <div class="alloc-chart-wrap">
+          <AssetAllocationChart
+            :items="stockDetailItems"
+            title="股票資產細節圓餅圖"
+            :total="stockDetailTotal"
+          />
+        </div>
+
+        <div class="alloc-list">
+          <div v-for="item in stockDetailItems" :key="item.label" class="alloc-item">
+            <span class="alloc-dot" :style="{ background: item.color }" />
+            <span class="alloc-name">{{ item.label }}</span>
+            <span class="alloc-amount">{{ stockDetailAmount(item.value) }}</span>
+            <span class="alloc-track">
+              <span
+                class="alloc-fill block"
+                :style="{ width: `${stockDetailPercent(item.value)}%`, background: item.color }"
+              />
+            </span>
+            <span class="alloc-pct">{{ stockDetailPercent(item.value) }}%</span>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section class="card">

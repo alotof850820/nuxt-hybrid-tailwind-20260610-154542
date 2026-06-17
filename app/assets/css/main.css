@@ -168,6 +168,31 @@ body {
     margin-top: 14px;
   }
 
+  .alloc-total-label {
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .alloc-visual {
+    align-items: center;
+    display: grid;
+    gap: 18px;
+    grid-template-columns: minmax(150px, 190px) minmax(0, 1fr);
+  }
+
+  .alloc-chart-wrap {
+    aspect-ratio: 1;
+    min-height: 150px;
+    position: relative;
+    width: 100%;
+  }
+
+  .alloc-chart-wrap canvas {
+    height: 100% !important;
+    width: 100% !important;
+  }
+
   .seg-row {
     display: flex;
     gap: 5px;
@@ -202,7 +227,14 @@ body {
 
   .alloc-name {
     color: var(--color-text-secondary);
-    flex: 1;
+    flex: 0 0 44px;
+  }
+
+  .alloc-amount {
+    color: var(--color-text-primary);
+    flex: 0 0 86px;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
   }
 
   .alloc-track {
@@ -323,6 +355,32 @@ body {
 
   tbody tr:hover .table-td {
     background: #353731;
+  }
+}
+
+@media (max-width: 720px) {
+  @layer components {
+    .alloc-visual {
+      grid-template-columns: 1fr;
+    }
+
+    .alloc-chart-wrap {
+      justify-self: center;
+      max-width: 210px;
+    }
+
+    .alloc-total-label {
+      white-space: normal;
+    }
+
+    .alloc-item {
+      flex-wrap: wrap;
+    }
+
+    .alloc-track {
+      flex-basis: calc(100% - 44px);
+      order: 5;
+    }
   }
 }
 

@@ -114,12 +114,32 @@ export const useFinancialPlan = () => {
   const totalInput = computed(() => {
     return initialAmount.value + annualInput.value * Math.min(stopInputYear.value, totalYears.value)
   })
+  const stockContributedCapital = computed(() => {
+    const positiveInputs = yearlyData.value.reduce((sum, row) => sum + Math.max(row.input, 0), 0)
+    return Math.round((initialAmount.value + positiveInputs) * 10) / 10
+  })
   const totalWithdrawal = computed(() => yearlyData.value.reduce((sum, row) => sum + row.withdrawal, 0))
   const totalHouseExpense = computed(() => {
     return yearlyData.value.reduce((sum, row) => sum + row.downPayment + row.houseLoan, 0)
   })
   const totalOtherExpense = computed(() => 0)
   const finalValue = computed(() => yearlyData.value.at(-1)?.value ?? initialAmount.value)
+  const stockInvestedAssetValue = computed(() => Math.min(stockContributedCapital.value, finalValue.value))
+  const stockCapitalGain = computed(() => {
+    return Math.round(Math.max(finalValue.value - stockContributedCapital.value, 0) * 10) / 10
+  })
+  const stockAssetBreakdown = computed(() => [
+    {
+      label: '投入成本',
+      value: stockInvestedAssetValue.value,
+      color: '#22c55e',
+    },
+    {
+      label: '資本利得',
+      value: stockCapitalGain.value,
+      color: '#3b82f6',
+    },
+  ])
   const netProfit = computed(() => {
     return finalValue.value + totalWithdrawal.value + totalHouseExpense.value - totalInput.value
   })
@@ -141,6 +161,10 @@ export const useFinancialPlan = () => {
     yearlyData,
     annualInput,
     totalInput,
+    stockContributedCapital,
+    stockInvestedAssetValue,
+    stockCapitalGain,
+    stockAssetBreakdown,
     totalWithdrawal,
     totalHouseExpense,
     totalOtherExpense,

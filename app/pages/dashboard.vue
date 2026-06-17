@@ -6,24 +6,12 @@ const plan = useFinancialPlan()
 const periodLabel = computed(() => `${plan.totalYears.value}Y`)
 const chartRows = computed(() => plan.yearlyData.value)
 
-const stockAllocation = computed(() => Math.max(plan.finalValue.value, 0))
-const houseAllocation = computed(() => (plan.buyHouse.value ? Math.max(plan.totalHouseExpense.value, 0) : 0))
-const allocationTotal = computed(() => Math.max(stockAllocation.value + houseAllocation.value, 1))
+const allocationTotal = computed(() => plan.finalValue.value)
+const allocationPercentBase = computed(() => Math.max(allocationTotal.value, 1))
+const allocationItems = computed(() => plan.stockAssetBreakdown.value)
 
-const allocationItems = computed(() => [
-  {
-    label: '股票',
-    value: stockAllocation.value,
-    color: '#3b82f6',
-  },
-  {
-    label: '買房',
-    value: houseAllocation.value,
-    color: '#f59e0b',
-  },
-])
-
-const allocationPercent = (value: number) => Math.round((value / allocationTotal.value) * 100)
+const allocationPercent = (value: number) => Math.round((value / allocationPercentBase.value) * 100)
+const allocationAmount = (value: number) => `${plan.formatWan(value)} 萬`
 
 useHead({
   title: '儀表板 | PlanLab',
@@ -72,28 +60,30 @@ useHead({
     <section class="card alloc-card">
       <div class="card-hd">
         <h2 class="card-title">資產配置</h2>
+        <p class="alloc-total-label">配置總額 {{ allocationAmount(allocationTotal) }}</p>
       </div>
 
-      <div class="seg-row">
-        <span
-          v-for="item in allocationItems"
-          :key="item.label"
-          class="seg-bar"
-          :style="{ width: `${allocationPercent(item.value)}%`, background: item.color }"
-        />
-      </div>
+      <div class="alloc-visual">
+        <div class="alloc-chart-wrap">
+          <AssetAllocationChart
+            :items="allocationItems"
+            :total="allocationTotal"
+          />
+        </div>
 
-      <div class="alloc-list">
-        <div v-for="item in allocationItems" :key="item.label" class="alloc-item">
-          <span class="alloc-dot" :style="{ background: item.color }" />
-          <span class="alloc-name">{{ item.label }}</span>
-          <span class="alloc-track">
-            <span
-              class="alloc-fill block"
-              :style="{ width: `${allocationPercent(item.value)}%`, background: item.color }"
-            />
-          </span>
-          <span class="alloc-pct">{{ allocationPercent(item.value) }}%</span>
+        <div class="alloc-list">
+          <div v-for="item in allocationItems" :key="item.label" class="alloc-item">
+            <span class="alloc-dot" :style="{ background: item.color }" />
+            <span class="alloc-name">{{ item.label }}</span>
+            <span class="alloc-amount">{{ allocationAmount(item.value) }}</span>
+            <span class="alloc-track">
+              <span
+                class="alloc-fill block"
+                :style="{ width: `${allocationPercent(item.value)}%`, background: item.color }"
+              />
+            </span>
+            <span class="alloc-pct">{{ allocationPercent(item.value) }}%</span>
+          </div>
         </div>
       </div>
     </section>

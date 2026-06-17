@@ -1,6 +1,18 @@
 {
   "features": [
     {
+      "id": "stock-asset-breakdown-visualization",
+      "title": "Visualize Stock Invested Cost And Capital Gain",
+      "status": "completed",
+      "scope": "Split stock assets into invested cost and capital gain in shared financial plan data, then visualize that breakdown on both the dashboard asset allocation section and the stocks page with quantified doughnut charts and Playwright coverage."
+    },
+    {
+      "id": "dashboard-allocation-doughnut-chart",
+      "title": "Add Quantified Dashboard Allocation Doughnut Chart",
+      "status": "completed",
+      "scope": "Replace the dashboard asset allocation bar-only display with a Chart.js doughnut chart, central total amount, quantified allocation list, and Playwright coverage that verifies the chart canvas is painted."
+    },
+    {
       "id": "readme-planlab-ai-agent-overview",
       "title": "Document PlanLab Features And AI Agent Workflow",
       "status": "completed",

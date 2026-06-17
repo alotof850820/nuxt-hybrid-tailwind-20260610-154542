@@ -230,3 +230,26 @@
 - Post-merge verification on `main` passed: `npm run test:tabler-types`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, and `npm run build`.
 - Pushed `main` to `origin/main`, triggering Vercel production deployment.
 - Verified `https://nuxt-hybrid-tailwind-20260610-15454.vercel.app/` returns HTTP 200 and contains the new landing marker `Build Financial Plans You Love`.
+- User requested a quantified pie-chart style visual on the dashboard homepage.
+- Added RED Playwright coverage in `scripts/test-dashboard-allocation-chart.mjs`; initial run failed because `配置總額` and the `資產配置圓餅圖` canvas did not exist.
+- Added `AssetAllocationChart.client.vue` using Chart.js doughnut rendering with center total text, tooltip values, and canvas accessibility label.
+- Updated `app/pages/dashboard.vue` asset allocation section to show a doughnut chart, total allocation amount, stock/house values, progress bars, and percentages.
+- Updated dashboard allocation responsive CSS so the chart and quantified list fit desktop and mobile layouts.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, `npm run test:tabler-types`, and `npm run build`.
+- User requested adding principal display to the dashboard asset allocation area.
+- Extended `scripts/test-dashboard-allocation-chart.mjs` to require `本金` and the default `400 萬` principal value; RED run failed because the principal summary did not exist.
+- Added a principal summary row inside the dashboard asset allocation card using `plan.initialAmount`, plus a percentage note comparing principal to the allocation total without adding principal into the allocation chart slices.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, `npm run test:tabler-types`, and `npm run build`.
+- User clarified that principal should appear inside the pie/doughnut chart rather than as a separate external row.
+- Updated the RED coverage so the allocation chart canvas must announce `本金 400 萬` and no `.alloc-summary` row may exist outside the chart.
+- Changed the doughnut chart center text from allocation total to `本金` plus the principal amount, passed `plan.initialAmount` into `AssetAllocationChart`, and removed the external principal summary styles.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, `npm run test:tabler-types`, and `npm run build`.
+- User clarified the asset allocation doughnut should include both stock amount and principal as slices, show the total in the center, and display different percentages.
+- Updated allocation data so the doughnut uses `本金` plus `股票` growth beyond principal as separate slices, with the center displaying their total.
+- Updated the chart accessible label to include total, each slice amount, and each percentage.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, `npm run test:tabler-types`, and `npm run build`.
+- User requested stock asset details be split into capital gains and invested amount, with visual detail on both the stocks page and dashboard homepage.
+- Extended `scripts/test-dashboard-allocation-chart.mjs` to require `投入成本` and `資本利得` on the dashboard allocation chart and a `股票資產細節圓餅圖` on `/stocks`; RED run failed because `投入成本` did not exist.
+- Added shared `stockContributedCapital`, `stockInvestedAssetValue`, `stockCapitalGain`, and `stockAssetBreakdown` computed values in `useFinancialPlan`.
+- Updated dashboard allocation to use the shared stock breakdown slices and updated stocks page with a quantified `股票資產細節` doughnut chart plus matching value/percentage list.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`, `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast`, `npm run test:tabler-types`, and `npm run build`.
