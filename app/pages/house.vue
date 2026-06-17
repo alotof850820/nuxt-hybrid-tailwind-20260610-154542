@@ -4,24 +4,36 @@ const plan = useFinancialPlan()
 const yearlyMortgage = computed(() => plan.monthlyPayment.value * 12)
 const houseMetrics = computed(() => [
   {
+    key: 'house-expense',
     label: '買房支出',
-    value: `${plan.formatWan(plan.buyHouse.value ? plan.totalHouseExpense.value : 0)} 萬`,
+    value: plan.buyHouse.value ? plan.totalHouseExpense.value : 0,
+    unit: '萬',
     detail: plan.buyHouse.value ? `第 ${plan.houseYear.value} 年開始` : '尚未啟用買房規劃',
+    changeTone: 'expense',
   },
   {
+    key: 'down-payment',
     label: '頭期款',
-    value: `${plan.formatWan(plan.buyHouse.value ? plan.downPayment.value : 0)} 萬`,
+    value: plan.buyHouse.value ? plan.downPayment.value : 0,
+    unit: '萬',
     detail: '一次性支出',
+    changeTone: 'expense',
   },
   {
+    key: 'mortgage-expense',
     label: '年房貸支出',
-    value: `${plan.formatWan(plan.buyHouse.value ? yearlyMortgage.value : 0)} 萬`,
+    value: plan.buyHouse.value ? yearlyMortgage.value : 0,
+    unit: '萬',
     detail: `月付 ${plan.monthlyPayment.value} 萬`,
+    changeTone: 'expense',
   },
   {
+    key: 'loan-period',
     label: '貸款期間',
-    value: plan.buyHouse.value ? `${plan.loanYears.value} 年` : '未設定',
+    value: plan.buyHouse.value ? plan.loanYears.value : 0,
+    unit: '年',
     detail: plan.buyHouse.value ? `影響第 ${plan.houseYear.value} 年後現金流` : '啟用後可計算',
+    changeTone: 'neutral',
   },
 ])
 
@@ -38,11 +50,17 @@ useHead({
     </header>
 
     <section class="kpi-grid md:grid-cols-2 xl:grid-cols-4">
-      <article v-for="metric in houseMetrics" :key="metric.label" class="kpi">
-        <p class="kpi-label">{{ metric.label }}</p>
-        <p class="kpi-value">{{ metric.value }}</p>
-        <p class="kpi-delta muted">{{ metric.detail }}</p>
-      </article>
+      <AnimatedKpiCard
+        v-for="metric in houseMetrics"
+        :key="metric.label"
+        :change-tone="metric.changeTone"
+        :detail="metric.detail"
+        detail-tone="muted"
+        :kpi-key="metric.key"
+        :label="metric.label"
+        :unit="metric.unit"
+        :value="metric.value"
+      />
     </section>
 
     <section class="card">

@@ -13,22 +13,34 @@ const stockDetailAmount = (value: number) => `${plan.formatWan(value)} 萬`
 
 const stockMetrics = computed(() => [
   {
+    key: 'capital-gain',
     label: '資本利得',
-    value: `+${plan.formatWan(plan.stockCapitalGain.value)} 萬`,
+    value: plan.stockCapitalGain.value,
+    unit: '萬',
+    signed: true,
     detail: `投入成本 ${plan.formatWan(plan.stockContributedCapital.value)} 萬`,
     tone: plan.stockCapitalGain.value >= 0 ? 'up' : 'dn',
+    changeTone: plan.stockCapitalGain.value >= 0 ? 'positive' : 'expense',
   },
   {
+    key: 'return-rate',
     label: '年化報酬',
-    value: `${plan.returnRate.value}%`,
+    value: plan.returnRate.value,
+    suffix: '%',
     detail: `vs 規劃基準 ${Math.max(plan.returnRate.value - 2, 0)}%`,
     tone: 'up',
+    changeTone: 'positive',
   },
   {
+    key: 'monthly-return',
     label: '本月回報',
-    value: '+6.1%',
+    value: 6.1,
+    suffix: '%',
+    signed: true,
+    decimals: 1,
     detail: '上月 +5.2%',
     tone: 'muted',
+    changeTone: 'neutral',
   },
 ])
 
@@ -45,16 +57,25 @@ useHead({
     </header>
 
     <section class="kpi-grid grid-cols-1 md:grid-cols-3">
-      <article v-for="metric in stockMetrics" :key="metric.label" class="kpi">
-        <p class="kpi-label">{{ metric.label }}</p>
-        <p class="kpi-value" :class="metric.tone === 'dn' ? 'dn' : metric.tone === 'up' ? '' : metric.tone">
-          {{ metric.value }}
-        </p>
-        <p class="kpi-delta" :class="metric.tone">
+      <AnimatedKpiCard
+        v-for="metric in stockMetrics"
+        :key="metric.label"
+        :change-tone="metric.changeTone"
+        :decimals="metric.decimals ?? 0"
+        :detail-tone="metric.tone"
+        :kpi-key="metric.key"
+        :label="metric.label"
+        :signed="metric.signed ?? false"
+        :suffix="metric.suffix ?? ''"
+        :unit="metric.unit ?? ''"
+        :value="metric.value"
+        :value-tone="metric.tone === 'dn' ? 'dn' : metric.tone === 'muted' ? 'muted' : undefined"
+      >
+        <template #delta>
           <IconArrowUpRight v-if="metric.tone === 'up'" class="size-3" :stroke="2" aria-hidden="true" />
           {{ metric.detail }}
-        </p>
-      </article>
+        </template>
+      </AnimatedKpiCard>
     </section>
 
     <section class="card alloc-card">

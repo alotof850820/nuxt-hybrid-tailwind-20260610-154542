@@ -64,8 +64,13 @@ body {
 
   .kpi {
     background: var(--color-background-primary);
+    border: 0.5px solid transparent;
     border-radius: var(--border-radius-md);
     padding: 12px 14px;
+    transition:
+      border-color 0.22s ease,
+      box-shadow 0.22s ease,
+      transform 0.22s ease;
   }
 
   .kpi-label {
@@ -81,7 +86,27 @@ body {
     color: var(--color-text-primary);
     font-size: 20px;
     font-weight: 500;
+    font-variant-numeric: tabular-nums;
     line-height: 1.2;
+  }
+
+  .kpi.is-changing {
+    transform: translateY(-1px);
+  }
+
+  .kpi.is-changing[data-change-tone="positive"] {
+    border-color: rgba(74, 222, 128, 0.42);
+    box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.08), 0 0 24px rgba(74, 222, 128, 0.1);
+  }
+
+  .kpi.is-changing[data-change-tone="expense"] {
+    border-color: rgba(245, 158, 11, 0.44);
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.08), 0 0 24px rgba(245, 158, 11, 0.1);
+  }
+
+  .kpi.is-changing[data-change-tone="neutral"] {
+    border-color: rgba(193, 202, 216, 0.28);
+    box-shadow: 0 0 0 1px rgba(193, 202, 216, 0.06), 0 0 20px rgba(193, 202, 216, 0.08);
   }
 
   .kpi-delta {

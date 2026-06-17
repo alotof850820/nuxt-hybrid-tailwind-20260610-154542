@@ -10,6 +10,7 @@
     "preview": "nuxt preview",
     "test:dashboard-allocation": "node scripts/test-dashboard-allocation-chart.mjs",
     "test:homepage-entry": "node scripts/test-homepage-entry.mjs",
+    "test:kpi-animation": "node scripts/test-kpi-animation.mjs",
     "test:tabler-types": "node scripts/test-tabler-icon-types.mjs",
     "test:home-trend": "node scripts/test-home-trend.mjs",
     "postinstall": "nuxt prepare"

@@ -1,6 +1,12 @@
 {
   "features": [
     {
+      "id": "kpi-count-up-change-animation",
+      "title": "Add KPI Count-Up And Change Feedback",
+      "status": "completed",
+      "scope": "Animate key dashboard, stocks, and house planning KPI values with restrained count-up behavior and brief positive or expense-toned change feedback when financial inputs change."
+    },
+    {
       "id": "dashboard-judgment-focused-animations",
       "title": "Add Judgment-Focused Dashboard Animations",
       "status": "completed",

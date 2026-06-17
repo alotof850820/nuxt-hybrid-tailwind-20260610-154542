@@ -75,14 +75,19 @@ onBeforeUnmount(() => {
     </header>
 
     <section class="kpi-grid grid-cols-1">
-      <article class="kpi">
-        <p class="kpi-label">總資產</p>
-        <p class="kpi-value">{{ plan.formatWan(plan.finalValue.value) }} 萬</p>
-        <p class="kpi-delta up">
+      <AnimatedKpiCard
+        change-tone="positive"
+        detail-tone="up"
+        kpi-key="total-assets"
+        label="總資產"
+        unit="萬"
+        :value="plan.finalValue.value"
+      >
+        <template #delta>
           <IconArrowUpRight class="size-3" :stroke="2" aria-hidden="true" />
           規劃 {{ plan.totalYears.value }} 年後
-        </p>
-      </article>
+        </template>
+      </AnimatedKpiCard>
     </section>
 
     <section class="card">
