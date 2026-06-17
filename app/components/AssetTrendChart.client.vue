@@ -30,12 +30,19 @@ const props = defineProps<{
   events?: TrendEvent[]
 }>()
 
+const emit = defineEmits<{
+  'update:event-year': [year: number]
+}>()
+
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip, Legend)
 
 const canvas = ref<HTMLCanvasElement | null>(null)
+const isDraggingEvent = ref(false)
 let chart: Chart<'line'> | null = null
 
 const formatWan = (value: number) => `${Math.round(value).toLocaleString()} 萬`
+const minDraggableYear = computed(() => Math.max(props.rows[1]?.year ?? 1, 1))
+const maxDraggableYear = computed(() => props.rows.at(-1)?.year ?? 1)
 
 const trendLabel = computed(() => {
   const eventText = props.events?.length
@@ -210,16 +217,85 @@ const renderChart = () => {
   chart = new Chart(canvas.value, createConfig())
 }
 
+const yearFromPointerEvent = (event: PointerEvent) => {
+  if (!chart || !canvas.value) return null
+
+  const xScale = chart.scales.x
+  if (!xScale) return null
+
+  const bounds = canvas.value.getBoundingClientRect()
+  const canvasX = event.clientX - bounds.left
+  const rawIndex = Number(xScale.getValueForPixel(canvasX))
+  if (!Number.isFinite(rawIndex)) return null
+
+  const rowIndex = Math.min(Math.max(Math.round(rawIndex), minDraggableYear.value), maxDraggableYear.value)
+  return props.rows[rowIndex]?.year ?? rowIndex
+}
+
+const isPointerNearEvent = (event: PointerEvent) => {
+  if (!chart || !canvas.value || !props.events?.length) return false
+
+  const bounds = canvas.value.getBoundingClientRect()
+  const pointerX = event.clientX - bounds.left
+  const xScale = chart.scales.x
+  if (!xScale) return false
+
+  return props.events.some((trendEvent) => {
+    const rowIndex = props.rows.findIndex((row) => row.year === trendEvent.year)
+    if (rowIndex < 0) return false
+
+    return Math.abs(pointerX - xScale.getPixelForValue(rowIndex)) <= 72
+  })
+}
+
+const updateEventYearFromPointer = (event: PointerEvent) => {
+  const nextYear = yearFromPointerEvent(event)
+  if (nextYear == null) return
+
+  emit('update:event-year', nextYear)
+}
+
+const handlePointerDown = (event: PointerEvent) => {
+  if (!isPointerNearEvent(event)) return
+
+  isDraggingEvent.value = true
+  canvas.value?.setPointerCapture(event.pointerId)
+  updateEventYearFromPointer(event)
+}
+
+const handlePointerMove = (event: PointerEvent) => {
+  if (!isDraggingEvent.value) return
+
+  updateEventYearFromPointer(event)
+}
+
+const handlePointerUp = (event: PointerEvent) => {
+  if (!isDraggingEvent.value) return
+
+  updateEventYearFromPointer(event)
+  isDraggingEvent.value = false
+  canvas.value?.releasePointerCapture(event.pointerId)
+}
+
 const scheduleRenderChart = async () => {
   await nextTick()
   requestAnimationFrame(renderChart)
 }
 
 onMounted(scheduleRenderChart)
-watch(() => props.rows, scheduleRenderChart, { deep: true, flush: 'post' })
+watch(() => [props.rows, props.events], scheduleRenderChart, { deep: true, flush: 'post' })
 onBeforeUnmount(() => chart?.destroy())
 </script>
 
 <template>
-  <canvas ref="canvas" :aria-label="trendLabel" role="img" />
+  <canvas
+    ref="canvas"
+    :aria-label="trendLabel"
+    :style="{ cursor: props.events?.length ? (isDraggingEvent ? 'grabbing' : 'grab') : 'default' }"
+    role="img"
+    @pointerdown="handlePointerDown"
+    @pointerleave="handlePointerUp"
+    @pointermove="handlePointerMove"
+    @pointerup="handlePointerUp"
+  />
 </template>

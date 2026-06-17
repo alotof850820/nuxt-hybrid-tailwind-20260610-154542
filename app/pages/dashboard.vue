@@ -42,6 +42,9 @@ const debtItems = computed(() => [
   },
 ])
 const debtPercent = (value: number) => Math.round((value / debtPercentBase.value) * 100)
+const updateHouseEventYear = (year: number) => {
+  plan.houseYear.value = year
+}
 
 useHead({
   title: '儀表板 | PlanLab',
@@ -83,7 +86,7 @@ useHead({
       </div>
 
       <div class="chart-area">
-        <AssetTrendChart :events="trendEvents" :rows="chartRows" />
+        <AssetTrendChart :events="trendEvents" :rows="chartRows" @update:event-year="updateHouseEventYear" />
       </div>
       <div v-if="trendEvents.length" class="event-list">
         <div v-for="event in trendEvents" :key="`${event.label}-${event.year}`" class="event-chip">

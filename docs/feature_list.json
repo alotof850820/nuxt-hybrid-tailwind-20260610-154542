@@ -1,6 +1,12 @@
 {
   "features": [
     {
+      "id": "dashboard-draggable-house-event",
+      "title": "Drag Dashboard House Event To Update Purchase Year",
+      "status": "completed",
+      "scope": "Make the dashboard asset trend house-purchase event marker draggable so moving it updates the house planning year and recalculates dependent dashboard and house-planning values."
+    },
+    {
       "id": "dashboard-house-event-and-debt-visualization",
       "title": "Visualize House Event And Mortgage Debt On Dashboard",
       "status": "completed",

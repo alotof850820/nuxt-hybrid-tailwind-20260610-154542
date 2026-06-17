@@ -88,6 +88,24 @@ for (const text of ['買房事件', '頭期款', '負債配置', '剩餘房貸',
 
 const trendCanvasWithHouseEvent = page.locator('canvas[aria-label*="買房事件"]')
 await trendCanvasWithHouseEvent.waitFor({ state: 'visible' })
+await page.getByText('第 5 年', { exact: false }).first().waitFor({ state: 'visible' })
+
+const trendCanvasBox = await trendCanvasWithHouseEvent.boundingBox()
+if (!trendCanvasBox) await fail('Expected trend chart canvas bounding box for dragging house event.')
+
+const dragStartX = trendCanvasBox.x + trendCanvasBox.width * (5 / 30)
+const dragTargetX = trendCanvasBox.x + trendCanvasBox.width * (11 / 30)
+const dragY = trendCanvasBox.y + trendCanvasBox.height / 2
+await page.mouse.move(dragStartX, dragY)
+await page.mouse.down()
+await page.mouse.move(dragTargetX, dragY, { steps: 8 })
+await page.mouse.up()
+
+await page.getByText('第 10 年', { exact: false }).first().waitFor({ state: 'visible' })
+const draggedTrendLabel = await trendCanvasWithHouseEvent.getAttribute('aria-label')
+if (!draggedTrendLabel?.includes('買房事件 第 10 年')) {
+  await fail(`Expected dragging house event to update the trend chart label to year 10, got: ${draggedTrendLabel}`)
+}
 
 const debtChartCanvas = page.locator('canvas[aria-label*="負債配置圓餅圖"]')
 await debtChartCanvas.waitFor({ state: 'visible' })
