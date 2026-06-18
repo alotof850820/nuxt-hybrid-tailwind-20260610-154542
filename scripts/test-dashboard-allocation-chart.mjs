@@ -14,26 +14,41 @@ const fail = async (message) => {
   throw new Error(message)
 }
 
+const parseWan = (text) => {
+  const match = text?.replace(/,/g, '').match(/([0-9]+(?:\.[0-9]+)?)\s*萬/)
+  return match ? Number(match[1]) : NaN
+}
+
 await page.goto(new URL('/dashboard', baseUrl).toString(), { waitUntil: 'networkidle' })
 
-for (const text of ['資產配置', '配置總額', '本金', '股票']) {
+for (const text of ['資產配置', '配置總額', '股票', '存款']) {
   await page.getByText(text, { exact: false }).first().waitFor({ state: 'visible' })
+}
+
+const assetAllocationCard = page.locator('section.alloc-card').filter({ hasText: '資產配置' }).first()
+const allocationMainNames = (await assetAllocationCard.locator('.alloc-name').allTextContents()).map((text) => text.trim())
+for (const text of ['股票', '存款']) {
+  if (!allocationMainNames.includes(text)) {
+    await fail(`Expected ${text} as a main allocation slice, got: ${allocationMainNames.join(', ')}`)
+  }
+}
+if (allocationMainNames.includes('本金')) {
+  await fail(`Expected principal to be merged into the stock allocation slice, got: ${allocationMainNames.join(', ')}`)
 }
 
 const chartCanvas = page.locator('canvas[aria-label*="資產配置圓餅圖"]')
 await chartCanvas.waitFor({ state: 'visible' })
 
-const totalAssetsText = await page.locator('.kpi').filter({ hasText: '總資產' }).locator('.kpi-value').first().textContent()
 const allocationTotalText = await page.locator('.alloc-total-label').first().textContent()
-
-const totalAssetsAmount = totalAssetsText?.replace(/\s/g, '')
-const allocationTotalAmount = allocationTotalText?.replace('配置總額', '').replace(/\s/g, '')
-if (totalAssetsAmount !== allocationTotalAmount) {
-  await fail(`Expected total assets and allocation total to match, got ${totalAssetsAmount} and ${allocationTotalAmount}`)
+const allocationTotalAmount = parseWan(allocationTotalText)
+const allocationSliceAmounts = await assetAllocationCard.locator('.alloc-item > .alloc-amount').allTextContents()
+const allocationSliceTotal = allocationSliceAmounts.reduce((sum, text) => sum + parseWan(text), 0)
+if (allocationTotalAmount !== allocationSliceTotal) {
+  await fail(`Expected allocation total to equal the allocation item sum, got ${allocationTotalAmount} and ${allocationSliceTotal}`)
 }
 
 const chartLabel = await chartCanvas.getAttribute('aria-label')
-for (const text of ['總額', '本金', '股票', '股票細節', '投入成本', '資本利得']) {
+for (const text of ['總額', '股票', '股票細節 本金', '投入成本', '資本利得', '存款']) {
   if (!chartLabel?.includes(text)) {
     await fail(`Expected allocation chart label to include ${text}, got: ${chartLabel}`)
   }
@@ -68,6 +83,11 @@ for (const text of ['股票資產細節', '投入成本', '資本利得']) {
   await page.getByText(text, { exact: false }).first().waitFor({ state: 'visible' })
 }
 
+const monthlyReturnCount = await page.getByText('本月回報', { exact: false }).count()
+if (monthlyReturnCount > 0) {
+  await fail('Expected the stocks page to remove the monthly return KPI.')
+}
+
 const stockDetailCanvas = page.locator('canvas[aria-label*="股票資產細節圓餅圖"]')
 await stockDetailCanvas.waitFor({ state: 'visible' })
 
@@ -91,7 +111,7 @@ await trendCanvasWithHouseEvent.waitFor({ state: 'visible' })
 if ((await trendCanvasWithHouseEvent.getAttribute('data-trend-animation')) !== 'smooth-event') {
   await fail('Expected asset trend chart to declare smooth event animation behavior.')
 }
-await page.getByText('第 5 年', { exact: false }).first().waitFor({ state: 'visible' })
+await page.getByText('35 歲', { exact: false }).first().waitFor({ state: 'visible' })
 
 const trendCanvasBox = await trendCanvasWithHouseEvent.boundingBox()
 if (!trendCanvasBox) await fail('Expected trend chart canvas bounding box for dragging house event.')
@@ -123,7 +143,7 @@ await page.mouse.up()
 await page.waitForTimeout(120)
 
 const nonTagDraggedTrendLabel = await trendCanvasWithHouseEvent.getAttribute('aria-label')
-if (!nonTagDraggedTrendLabel?.includes('買房事件 第 5 年')) {
+if (!nonTagDraggedTrendLabel?.includes('買房事件 35 歲')) {
   await fail(`Expected dragging outside the house event tag to keep year 5, got: ${nonTagDraggedTrendLabel}`)
 }
 
@@ -148,13 +168,20 @@ if (!tagPoint) {
 
 await page.mouse.move(tagPoint.x, tagPoint.y)
 await page.mouse.down()
-await page.mouse.move(dragTargetX, tagPoint.y, { steps: 8 })
+let draggedTrendLabel = null
+for (let index = 1; index <= 24; index += 1) {
+  const x = trendCanvasBox.x + trendCanvasBox.width * (index / 25)
+  await page.mouse.move(x, tagPoint.y, { steps: 2 })
+  await page.waitForTimeout(24)
+  draggedTrendLabel = await trendCanvasWithHouseEvent.getAttribute('aria-label')
+  if (draggedTrendLabel?.includes(`買房事件 ${30 + dragTargetYear} 歲`)) break
+}
 await page.mouse.up()
 
-await page.getByText(`第 ${dragTargetYear} 年`, { exact: false }).first().waitFor({ state: 'visible' })
+await page.getByText(`${30 + dragTargetYear} 歲`, { exact: false }).first().waitFor({ state: 'visible' })
 await page.locator('.event-chip.is-pulsing').first().waitFor({ state: 'visible' })
-const draggedTrendLabel = await trendCanvasWithHouseEvent.getAttribute('aria-label')
-if (!draggedTrendLabel?.includes(`買房事件 第 ${dragTargetYear} 年`)) {
+draggedTrendLabel = await trendCanvasWithHouseEvent.getAttribute('aria-label')
+if (!draggedTrendLabel?.includes(`買房事件 ${30 + dragTargetYear} 歲`)) {
   await fail(`Expected dragging house event to update the trend chart label to year ${dragTargetYear}, got: ${draggedTrendLabel}`)
 }
 

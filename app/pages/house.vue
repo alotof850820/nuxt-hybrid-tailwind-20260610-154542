@@ -8,7 +8,7 @@ const houseMetrics = computed(() => [
     label: '買房支出',
     value: plan.buyHouse.value ? plan.totalHouseExpense.value : 0,
     unit: '萬',
-    detail: plan.buyHouse.value ? `第 ${plan.houseYear.value} 年開始` : '尚未啟用買房規劃',
+    detail: plan.buyHouse.value ? `${plan.ageAtYear(plan.houseYear.value)} 歲開始` : '尚未啟用買房規劃',
     changeTone: 'expense',
   },
   {
@@ -32,7 +32,7 @@ const houseMetrics = computed(() => [
     label: '貸款期間',
     value: plan.buyHouse.value ? plan.loanYears.value : 0,
     unit: '年',
-    detail: plan.buyHouse.value ? `影響第 ${plan.houseYear.value} 年後現金流` : '啟用後可計算',
+    detail: plan.buyHouse.value ? `影響 ${plan.ageAtYear(plan.houseYear.value)} 歲後現金流` : '啟用後可計算',
     changeTone: 'neutral',
   },
 ])
@@ -74,8 +74,8 @@ useHead({
 
       <div v-if="plan.buyHouse.value" class="grid gap-4 lg:grid-cols-4">
         <label class="range-field">
-          <span>第 {{ plan.houseYear.value }} 年買房</span>
-          <input v-model.number="plan.houseYear.value" class="w-full" type="range" min="1" :max="plan.totalYears.value" step="1">
+          <span>{{ plan.ageAtYear(plan.houseYear.value) }} 歲買房</span>
+          <input v-model.number="plan.houseYear.value" class="w-full" type="range" min="1" :max="plan.globalMaxYears.value" step="1">
         </label>
         <label class="range-field">
           <span>頭期款：{{ plan.downPayment.value }} 萬</span>
@@ -87,10 +87,12 @@ useHead({
         </label>
         <label class="range-field">
           <span>貸款年限：{{ plan.loanYears.value }} 年</span>
-          <input v-model.number="plan.loanYears.value" class="w-full" type="range" min="5" max="40" step="1">
+          <input v-model.number="plan.loanYears.value" class="w-full" type="range" min="5" :max="plan.globalMaxYears.value" step="1">
         </label>
       </div>
       <p v-else class="muted text-sm">啟用後可設定買房年度、頭期款、月付與貸款年限。</p>
     </section>
   </div>
 </template>
+
+

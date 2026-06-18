@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-ssr-spa-hybrid-tailwind",
+  "name": "planlab",
   "type": "module",
   "private": true,
   "scripts": {
@@ -11,10 +11,16 @@
     "test:dashboard-allocation": "node scripts/test-dashboard-allocation-chart.mjs",
     "test:homepage-entry": "node scripts/test-homepage-entry.mjs",
     "test:kpi-animation": "node scripts/test-kpi-animation.mjs",
+    "test:deposits": "node scripts/test-deposits.mjs",
+    "test:goal-settings": "node scripts/test-goal-settings.mjs",
     "test:remaining-animations": "node scripts/test-remaining-animations.mjs",
     "test:tabler-types": "node scripts/test-tabler-icon-types.mjs",
     "test:home-trend": "node scripts/test-home-trend.mjs",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "test:item-isolation": "node scripts/test-item-isolation.mjs",
+    "test:event-drag-caps": "node scripts/test-event-drag-and-year-caps.mjs",
+    "test:global-event-drag-guard": "node scripts/test-global-event-drag-guard.mjs",
+    "test:item-horizon-allocation": "node scripts/test-item-horizon-allocation.mjs"
   },
   "dependencies": {
     "@tabler/icons-vue": "^3.44.0",

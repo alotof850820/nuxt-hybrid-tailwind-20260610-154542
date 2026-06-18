@@ -112,6 +112,7 @@ import IconChevronRight from '@tabler/icons-vue/dist/esm/icons/IconChevronRight.
 import IconLayoutDashboard from '@tabler/icons-vue/dist/esm/icons/IconLayoutDashboard.mjs'
 import IconListDetails from '@tabler/icons-vue/dist/esm/icons/IconListDetails.mjs'
 import IconSettings from '@tabler/icons-vue/dist/esm/icons/IconSettings.mjs'
+import IconWallet from '@tabler/icons-vue/dist/esm/icons/IconWallet.mjs'
 
 const route = useRoute()
 const isCollapsed = ref(false)
@@ -119,6 +120,7 @@ const isCollapsed = ref(false)
 const navItems = [
   { to: '/dashboard', label: '首頁', icon: IconLayoutDashboard },
   { to: '/stocks', label: '股票', icon: IconChartCandle },
+  { to: '/deposits', label: '存款', icon: IconWallet },
   { to: '/house', label: '買房規劃', icon: IconBuildingBank },
   { to: '/details', label: '明細', icon: IconListDetails },
 ]

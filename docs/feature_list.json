@@ -1,6 +1,66 @@
 {
   "features": [
     {
+      "id": "item-horizon-allocation-and-deposit-detail",
+      "title": "Use Item Horizons For Allocation And Deposit Detail",
+      "status": "completed",
+      "scope": "Make deposit asset detail follow demand-deposit planning years, and make dashboard asset allocation use each item page horizon such as stock planning years instead of global dashboard years."
+    },
+    {
+      "id": "guard-global-settings-during-event-drag",
+      "title": "Guard Global Settings During Event Drag",
+      "status": "completed",
+      "scope": "Prevent dashboard event dragging from changing global settings, allow dragging only item event time points, and reject drag updates when other events cannot be shifted to valid item time points."
+    },
+    {
+      "id": "draggable-events-and-global-year-caps",
+      "title": "Make Dashboard Events Draggable And Cap Item Timelines",
+      "status": "completed",
+      "scope": "Make dashboard asset-trend events draggable, shift other event timelines when needed to satisfy the dragged event, and cap all item-page planning time controls to the global year count."
+    },
+    {
+      "id": "item-page-independent-calculations",
+      "title": "Keep Item Page Calculations Independent",
+      "status": "completed",
+      "scope": "Ensure stock, deposit, and house item pages calculate their own assets independently, while dashboard/home overview remains the place that integrates cross-item effects such as house planning cash flow."
+    },
+    {
+      "id": "remove-project-agents-use-global-agents",
+      "title": "Use Global Codex AGENTS Instead Of Project AGENTS",
+      "status": "completed",
+      "scope": "Confirm global C:\\Users\\User\\.codex\\AGENTS.md is readable, remove the project-level C:\\PlanLab\\AGENTS.md override, and restore project state from docs/progress.md and docs/feature_list.json under the global workflow rules."
+    },
+    {
+      "id": "planlab-root-relocation-cleanup",
+      "title": "Clean Up PlanLab Root After C Drive Relocation",
+      "status": "completed",
+      "scope": "Update project naming and documentation for C:\\PlanLab, add root AGENTS.md, ignore/remove stale dev-server folders and logs, and verify production build from the new path."
+    },
+    {
+      "id": "global-years-age-labels-and-demand-deposit-horizon",
+      "title": "Fix Global Years Age Labels And Demand Deposit Horizon",
+      "status": "completed",
+      "scope": "Rename the global dashboard horizon setting to year count, migrate legacy 10Y homepage defaults to 15Y, add a separate demand-deposit planning horizon, display related year-based labels as ages, and make annual details follow the global year count."
+    },
+    {
+      "id": "allocation-deposit-defaults-and-age-axis",
+      "title": "Tune Allocation Deposit Defaults And Age Axis",
+      "status": "completed",
+      "scope": "Merge principal into the stock allocation display, merge cash into demand deposits, enable fixed deposits with a checkbox, show age labels on the dashboard trend X axis, set default current age/homepage years/target amount to 30/15/2000, and remove the monthly return stock KPI."
+    },
+    {
+      "id": "stock-principal-and-global-goal-settings",
+      "title": "Move Stock Principal And Add Global Goal Settings",
+      "status": "completed",
+      "scope": "Move initial principal controls from global settings to the stocks page, add global age, dashboard/homepage year, and target amount settings, sync the target amount as an event across dashboard trend and annual details, and keep the dashboard asset trend year independent from the stocks planning year."
+    },
+    {
+      "id": "deposit-assets-and-events",
+      "title": "Add Deposit Assets And Fixed Deposit Events",
+      "status": "completed",
+      "scope": "Add a deposits item with cash, demand deposit, and fixed deposit balances; apply interest rates to demand and fixed deposits; sync deposit totals, allocation, trend events, and annual details across the app."
+    },
+    {
       "id": "remaining-judgment-focused-animations",
       "title": "Finish Remaining Judgment-Focused Animations",
       "status": "completed",

@@ -305,3 +305,206 @@
 - Confirmed Vercel project `prj_R1IGTxqvC5gOclvx7kLp9YNiHEzU` is now named `planlab`; exact alias `planlab.vercel.app` is unavailable because it is already in use.
 - Added `planlab-alotof850820.vercel.app` as a Vercel project domain/alias for the current production deployment and verified `https://planlab-alotof850820.vercel.app/dashboard` returns HTTP 200 with dashboard SSR content.
 - Updated `.vercel/project.json` and README to use the `planlab` Vercel project/domain naming.
+
+## 2026-06-18
+
+- User requested adding a new `存款` item with `現金`, `活存`, and `定存`, where `活存` and `定存` have interest rates and fixed-deposit events sync to related pages.
+- Added RED Playwright coverage in `scripts/test-deposits.mjs`; initial run failed because `/deposits` did not exist.
+- Added shared deposit state and calculations in `app/composables/useFinancialPlan.ts`, separating stock value from total asset value so stock metrics remain stock-only while total assets include deposits.
+- Added deposit balances, demand-deposit interest, fixed-deposit maturity value, fixed-deposit interest, deposit breakdown data, and `定存事件` plan events.
+- Updated dashboard allocation to include a `存款` slice with `現金`, `活存`, and `定存` details, and updated the asset trend to render both buy-house and fixed-deposit events by event id.
+- Updated `AssetTrendChart.client.vue` so draggable events emit `{ id, year }`, preventing fixed-deposit event dragging from mutating the house-purchase year.
+- Added `/deposits` with KPI cards, a deposit breakdown doughnut chart, and controls for cash amount, demand-deposit amount/rate, fixed-deposit amount/rate, and fixed-deposit maturity year.
+- Added the `存款` sidebar item with a Tabler wallet icon.
+- Updated annual details with a `存款利息` column and a `定存事件` row badge.
+- Updated the stocks page to keep `股票資產細節` based on `stockFinalValue` instead of total assets, so deposits do not pollute stock performance.
+- Fixed Vite dev dependency optimization failures under the sandboxed OneDrive/Chinese path environment by excluding `chart.js` and `@tabler/icons-vue` from `optimizeDeps`.
+- Updated `scripts/audit-contrast.mjs` to include `/deposits`.
+- Verification passed: `npm run test:deposits`.
+- Verification passed: `npm run test:dashboard-allocation`.
+- Verification passed: `npm run test:home-trend`.
+- Verification passed: `npm run test:homepage-entry`.
+- Verification passed: `npm run test:kpi-animation`.
+- Verification passed: `npm run test:remaining-animations`.
+- Verification passed: `npm run audit:contrast` reported `Contrast failures: 0`.
+- Verification passed: `npm run test:tabler-types` reported `Typed 11 Tabler deep icon imports.`
+- Verification passed: escalated `npm run build` completed successfully outside the sandbox after sandboxed build hit the known OneDrive `EPERM: operation not permitted, readlink 'C:\Users\User'` issue.
+- Marked `deposit-assets-and-events` completed in `docs/feature_list.json`.
+- User requested moving `本金設定` and its related logic from global settings to the stocks item, and adding global `年齡` plus `目標金額` event logic that syncs to related pages.
+- Added RED Playwright coverage in `scripts/test-goal-settings.mjs`; initial run failed because `/settings` still showed the old principal-only settings model.
+- Added `currentAge`, `targetAmount`, target-reached computed values, and non-draggable `目標金額事件` plan events to `app/composables/useFinancialPlan.ts`.
+- Reworked `app/pages/settings.vue` into `全域設定` with current age and target amount controls plus an estimated target-reached year/age summary.
+- Moved initial principal control UI into `app/pages/stocks.vue` under `本金設定`, keeping `initialAmount` as the stock principal source for existing projection logic.
+- Updated dashboard trend events so `目標金額事件` appears alongside buy-house and fixed-deposit events while remaining non-draggable.
+- Updated annual details with an `年齡` column and `目標金額事件` badge/data row when total assets first reach the target amount.
+- Updated `scripts/test-homepage-entry.mjs` so the settings route marker follows the new `全域設定` page.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:goal-settings`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:deposits`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:kpi-animation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:remaining-animations`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast` reported `Contrast failures: 0`.
+- Verification passed: `npm run test:tabler-types` reported `Typed 11 Tabler deep icon imports.`
+- Verification blocked: sandboxed `npm run build` reached Nitro packaging and failed on the known OneDrive sandbox `EPERM: operation not permitted, readlink 'C:\Users\User'`; the sandbox-outside rerun request was rejected by the platform auto-review capacity gate, so `stock-principal-and-global-goal-settings` remains `in_progress` pending production build verification.
+- User requested separating the dashboard/homepage `資產變化趨勢` year setting from the stocks planning year and moving the homepage year setting to global settings.
+- Updated `scripts/test-home-trend.mjs` so RED verification required `/settings` to expose `首頁年份`, then required the dashboard trend tab to stay at the global `42Y` setting even after the stocks page `規劃年數` was changed to 18.
+- Added persisted `dashboardTrendYears` state and reusable yearly projection generation in `app/composables/useFinancialPlan.ts`, keeping stocks/detail calculations on `totalYears` while dashboard trend, dashboard KPI, dashboard allocation, dashboard deposit details, dashboard target event, and dashboard mortgage debt values use the homepage year horizon.
+- Updated `/settings` with a `首頁年份` range control under `全域設定`.
+- Updated `/dashboard` to use dashboard-specific rows, events, final value, stock/deposit breakdowns, and mortgage paid/remaining values; dashboard event dragging still clamps house and fixed-deposit event writes to the stock/domain planning horizon.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:goal-settings`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:deposits`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:kpi-animation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:remaining-animations`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast` reported `Contrast failures: 0`.
+- Verification passed: `npm run test:tabler-types` reported `Typed 11 Tabler deep icon imports.`
+- Verification note: sandboxed `npm run build` still failed at Nitro packaging with the known OneDrive sandbox `EPERM: operation not permitted, readlink 'C:\Users\User'`.
+- Verification passed: escalated `npm run build` completed successfully outside the sandbox after the known OneDrive sandbox failure.
+- Marked `stock-principal-and-global-goal-settings` completed in `docs/feature_list.json`.
+- User requested merging principal into the stock allocation display, enabling fixed deposits by checkbox, merging cash into demand deposits, showing age on the dashboard trend X axis, changing defaults to current age 30 / homepage years 15 / target amount 2000, and removing the stocks page monthly return KPI.
+- Added an active WIP feature record `allocation-deposit-defaults-and-age-axis` in `docs/feature_list.json`.
+- Updated RED coverage:
+  - `scripts/test-home-trend.mjs` now requires default `目前年齡：30 歲`, `首頁年份：15 年`, `目標金額：2,000 萬`, and trend chart age-axis aria text.
+  - `scripts/test-dashboard-allocation-chart.mjs` now requires dashboard allocation main slices to be `股票` and `存款`, with `本金` included under `股票細節`, and requires the stocks page to omit `本月回報`.
+  - `scripts/test-deposits.mjs` now requires `啟用定存` as a checked checkbox, verifies disabling it removes fixed-deposit events, and verifies `現金` is not visible or present in dashboard deposit allocation details.
+- Updated `useFinancialPlan` defaults and state: `currentAge` defaults to 30, `dashboardTrendYears` defaults to 15, `targetAmount` defaults to 2000, `fixedDepositEnabled` defaults to true, and cash is merged into demand deposits by default.
+- Updated deposit calculations so fixed-deposit principal, interest, allocation details, and events only apply when `fixedDepositEnabled` is true; fixed-deposit trend events remain visible but are no longer draggable from the dashboard.
+- Updated dashboard allocation so `股票` is the main slice for the full stock value, with `本金`, `投入成本`, and `資本利得` presented as stock details; `存款` remains the other main allocation slice.
+- Updated `AssetTrendChart.client.vue` to accept `currentAge`, render age labels on the X axis, and include the age-axis range in the chart aria label.
+- Updated `/deposits` to remove separate cash UI, add the fixed-deposit checkbox, and conditionally show fixed-deposit controls and KPI data.
+- Updated `/details` fixed-deposit event rows to respect the fixed-deposit checkbox.
+- Removed the static `本月回報` KPI from `/stocks`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:goal-settings`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:deposits`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:kpi-animation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:remaining-animations`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast` reported `Contrast failures: 0`.
+- Verification passed: `npm run test:tabler-types` reported `Typed 11 Tabler deep icon imports.`
+- Verification note: sandboxed `npm run build` still failed at Nitro packaging with the known OneDrive sandbox `EPERM: operation not permitted, readlink 'C:\Users\User'`.
+- Verification passed: escalated `npm run build` completed successfully outside the sandbox after the known OneDrive sandbox failure.
+- Marked `allocation-deposit-defaults-and-age-axis` completed in `docs/feature_list.json`.
+- User clarified that the dashboard trend setting still showed `10Y`, should default to `15Y`, the global setting label should be `年數`, demand deposits need their own planning horizon, related year displays should become ages, and annual detail rows should follow the global year count.
+- Added active WIP feature record `global-years-age-labels-and-demand-deposit-horizon` in `docs/feature_list.json`.
+- Updated RED coverage:
+  - `scripts/test-home-trend.mjs` now verifies legacy `10Y` homepage cookies migrate to the 15-year default, global settings show `年數`, dashboard trend follows global years independently from stock planning years, chart accessibility uses an age axis, and annual detail rows display ages for the global year count.
+  - `scripts/test-deposits.mjs` now verifies `活存規劃年數`, demand-deposit age summary text, and fixed-deposit events displayed by age.
+  - `scripts/test-dashboard-allocation-chart.mjs` now verifies event chips use ages and the stocks page still omits `本月回報`.
+- Updated `useFinancialPlan` so global dashboard trend years use a new persisted `planlab-global-years` cookie defaulting to 15 years, while legacy 10-year dashboard cookies no longer force the homepage back to `10Y`.
+- Added `demandDepositYears`, demand-deposit planned value/interest calculations, and `ageAtYear()` so demand-deposit growth can have its own horizon and pages can consistently render ages.
+- Updated `/settings` label text from `首頁年份` to `年數`, kept current age default at 30, target amount default at 2,000 萬, and dashboard trend horizon default at 15 years.
+- Updated `/deposits` with a demand-deposit planning-years slider and age-based demand/fixed-deposit summaries.
+- Updated `/dashboard`, `AssetTrendChart.client.vue`, `/details`, `/house`, and `/stocks` so related event labels, chart axis labels, annual detail rows, and planning helper text show ages instead of `第 N 年`.
+- Updated `/details` annual income/expense rows to use `dashboardYearlyData`, so the list length follows the global dashboard `年數` setting rather than the stock planning years.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:deposits`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:goal-settings`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:kpi-animation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:remaining-animations`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast` reported `Contrast failures: 0`.
+- Verification passed: `npm run test:tabler-types` reported `Typed 11 Tabler deep icon imports.`
+- Verification note: sandboxed `npm run build` reached Nitro packaging and failed on the known OneDrive sandbox `EPERM: operation not permitted, readlink 'C:\Users\User'`.
+- Verification blocked: sandbox-outside `npm run build` rerun was rejected by the platform auto-review usage limit, so `global-years-age-labels-and-demand-deposit-horizon` remains `in_progress` pending production build verification.
+- User moved the project from the old OneDrive desktop path to `C:\PlanLab` and asked to整理 related files.
+- Added root `AGENTS.md` in `C:\PlanLab` so future sessions can restore the project workflow directly from the new repository root.
+- Renamed the package metadata from `nuxt-ssr-spa-hybrid-tailwind` to `planlab` in `package.json` and `package-lock.json`.
+- Rewrote `README.md` for the current PlanLab app shape, including global settings, stocks, deposits, house planning, annual details, and the new local folder path.
+- Updated `.gitignore` to ignore accidental `3100/` and `3101/` dev-server folders in addition to Nuxt output and dev logs.
+- Removed stale root dev logs and dead pid files, plus stale `.nuxt`, `.output`, `3100`, and `3101` generated folders from before the relocation.
+- Verification passed: `rg` over primary config/docs found no old project name or old OneDrive folder references in `package.json`, `package-lock.json`, `README.md`, `.gitignore`, `AGENTS.md`, `.vercel/project.json`, or `vercel.json`.
+- Verification passed: `npm run build` completed successfully from `C:\PlanLab`, confirming the prior OneDrive sandbox `readlink 'C:\Users\User'` build blocker is gone in the new location.
+- Marked `global-years-age-labels-and-demand-deposit-horizon` completed in `docs/feature_list.json` after the successful production build.
+- Added completed feature record `planlab-root-relocation-cleanup` to `docs/feature_list.json`.
+- User requested using the global Codex AGENTS.md instead of the project-level `C:\PlanLab\AGENTS.md`.
+- Verified `C:\Users\User\.codex\AGENTS.md` is readable from the current runtime.
+- Removed the project-level `C:\PlanLab\AGENTS.md` override so future project work follows the global AGENTS.md unless another project-local file is added intentionally.
+- Restored project state from `docs/progress.md` and `docs/feature_list.json` according to the global workflow rules.
+- Verification passed: `Test-Path -LiteralPath C:\PlanLab\AGENTS.md` returned `False`.
+- Added completed feature record `remove-project-agents-use-global-agents` to `docs/feature_list.json`.
+- User clarified that each item page calculation must be independent: house planning funds must not affect the stocks page, and cross-item integration should happen on the homepage/dashboard only.
+- Added active WIP feature record `item-page-independent-calculations` in `docs/feature_list.json`.
+- Added RED Playwright coverage in `scripts/test-item-isolation.mjs` and package script `npm run test:item-isolation`.
+- RED verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:item-isolation` failed because enabling an aggressive house plan changed the stocks page total from `股票總額1,837萬` to `股票總額0萬`.
+- Split financial projection rows so `yearlyData` is item-page independent and excludes house cash-flow effects, while `dashboardYearlyData` keeps the integrated homepage/dashboard calculation with house cash-flow effects.
+- Updated house total expense calculation to derive directly from house parameters and planning horizon, so the house page remains independent from stock projection rows.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:item-isolation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:deposits`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:goal-settings`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:kpi-animation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:remaining-animations`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast` reported `Contrast failures: 0`.
+- Verification passed: `npm run test:tabler-types` reported `Typed 11 Tabler deep icon imports.`
+- Verification passed: `npm run build` completed successfully from `C:\PlanLab`.
+- Marked `item-page-independent-calculations` completed in `docs/feature_list.json`.
+- User requested all dashboard asset-trend event elements be draggable like the house event, dragging one event should automatically shift other event time points when needed, and each item page planning-time maximum must not exceed the global year count.
+- Added active WIP feature record `draggable-events-and-global-year-caps` in `docs/feature_list.json`.
+- Added RED Playwright coverage in `scripts/test-event-drag-and-year-caps.mjs` and package script `npm run test:event-drag-caps`; RED failed because stock planning years still allowed max `50` when global years were set to `12`.
+- Added shared `globalMaxYears` and `clampToGlobalYears` logic in `app/composables/useFinancialPlan.ts`, clamping stock years, demand-deposit years, fixed-deposit maturity year, house purchase year, loan years, and stock contribution/withdrawal timing to the global horizon where appropriate.
+- Updated `/stocks`, `/deposits`, and `/house` range controls so item planning maxima follow the global `年數` setting; loan years keep their 5-year minimum while respecting the global maximum.
+- Made fixed-deposit and target-amount trend events draggable, and updated `/dashboard` so dragging an event writes back to the correct source setting; if events collide, the dragged event keeps priority and other adjustable events shift to the nearest available year, preferring later years.
+- Updated `scripts/test-dashboard-allocation-chart.mjs` to locate dashboard event drag targets by observed chart behavior instead of raw canvas-width ratios, avoiding Chart.js chart-area padding drift.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:event-drag-caps`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:deposits`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:goal-settings`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:item-isolation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:kpi-animation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:remaining-animations`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast` reported `Contrast failures: 0`.
+- Verification passed: `npm run test:tabler-types` reported `Typed 11 Tabler deep icon imports.`
+- Verification passed: `npm run build` completed successfully from `C:\PlanLab`; Nuxt/Tailwind sourcemap warnings and a Vue package deprecation warning were emitted but did not fail the build.
+- Marked `draggable-events-and-global-year-caps` completed in `docs/feature_list.json`.
+- User clarified that global setting values must never change automatically during dashboard event dragging; dragging may only change item event time points, and if other items cannot satisfy the move then the drag update must be rejected.
+- Added active WIP feature record `guard-global-settings-during-event-drag` in `docs/feature_list.json`.
+- Added RED Playwright coverage in `scripts/test-global-event-drag-guard.mjs` and package script `npm run test:global-event-drag-guard`; RED failed because the global target amount event still produced a `grab` cursor near its event year.
+- Updated target amount events in `app/composables/useFinancialPlan.ts` to be display-only with `draggable: false`, because target amount is a global setting and not an item event time point.
+- Reworked `/dashboard` event dragging so only item events (`house-purchase`, `fixed-deposit`) are movable. Dragging now first plans all affected event years against fixed/global event years, rejects impossible moves without changing state, and applies item event year changes only when the whole move is valid.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:global-event-drag-guard`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:event-drag-caps`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:deposits`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:goal-settings`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:item-isolation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:kpi-animation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:remaining-animations`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast` reported `Contrast failures: 0`.
+- Verification passed: `npm run test:tabler-types` reported `Typed 11 Tabler deep icon imports.`
+- Verification passed: `npm run build` completed successfully from `C:\PlanLab`; Nuxt/Tailwind sourcemap warnings and a Vue shared deprecation warning were emitted but did not fail the build.
+- Marked `guard-global-settings-during-event-drag` completed in `docs/feature_list.json`.
+- User requested deposit asset detail to change according to demand-deposit planning years, and dashboard asset allocation stock amount to use the stock planning horizon when stock years differ from global years.
+- Added active WIP feature record `item-horizon-allocation-and-deposit-detail` in `docs/feature_list.json`.
+- Added RED Playwright coverage in `scripts/test-item-horizon-allocation.mjs` and package script `npm run test:item-horizon-allocation`; RED failed because deposit detail total stayed `1841 -> 1841` when demand-deposit years changed from 10 to 15.
+- Added `depositYearlyData` in `app/composables/useFinancialPlan.ts` so deposit totals, demand-deposit final value, total deposit interest, and deposit breakdown use `demandDepositYears` rather than stock `totalYears`.
+- Updated `/deposits` so the deposit total KPI helper text also reflects `demandDepositYears`.
+- Updated `/dashboard` asset allocation to use item-horizon values: stock allocation and stock details use `stockFinalValue`/`stockAssetBreakdown`, while deposit allocation and deposit details use `depositFinalValue`/`depositBreakdown`; allocation total is now the sum of allocation items rather than the global dashboard trend total.
+- Updated `scripts/test-dashboard-allocation-chart.mjs` so allocation total is verified against allocation item sums instead of the global total-assets KPI, matching the item-horizon allocation rule.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:item-horizon-allocation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:dashboard-allocation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:deposits`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:home-trend`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:item-isolation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:goal-settings`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:event-drag-caps`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:global-event-drag-guard`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:homepage-entry`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:kpi-animation`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run test:remaining-animations`.
+- Verification passed: `$env:TARGET_URL='http://127.0.0.1:3100'; npm run audit:contrast` reported `Contrast failures: 0`.
+- Verification passed: `npm run test:tabler-types` reported `Typed 11 Tabler deep icon imports.`
+- Verification passed: `npm run build` completed successfully from `C:\PlanLab`; Nuxt/Tailwind sourcemap warnings and a Vue shared deprecation warning were emitted but did not fail the build.
+- Marked `item-horizon-allocation-and-deposit-detail` completed in `docs/feature_list.json`.

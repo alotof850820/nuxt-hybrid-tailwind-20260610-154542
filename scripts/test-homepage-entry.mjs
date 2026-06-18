@@ -41,7 +41,7 @@ const expectedRoutes = [
   ['/stocks', '投資基本設定'],
   ['/house', '買房規劃'],
   ['/details', '年度收支明細'],
-  ['/settings', '本金設定'],
+  ['/settings', '全域設定'],
 ]
 
 for (const [route, marker] of expectedRoutes) {

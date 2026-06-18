@@ -19,28 +19,34 @@ type TrendRow = {
 }
 
 type TrendEvent = {
+  id: string
   year: number
   label: string
   amount: number
   detail: string
+  color?: string
+  draggable?: boolean
 }
 
 type EventHitbox = {
+  id: string
   x: number
   y: number
   width: number
   height: number
   label: string
   year: number
+  draggable: boolean
 }
 
 const props = defineProps<{
+  currentAge: number
   rows: TrendRow[]
   events?: TrendEvent[]
 }>()
 
 const emit = defineEmits<{
-  'update:event-year': [year: number]
+  'update:event-year': [event: { id: string, year: number }]
 }>()
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip, Legend)
@@ -49,6 +55,7 @@ const canvas = ref<HTMLCanvasElement | null>(null)
 const isDraggingEvent = ref(false)
 const isPointerOverEventTag = ref(false)
 const eventLineProgress = ref(1)
+const draggingEventId = ref<string | null>(null)
 let chart: Chart<'line'> | null = null
 let eventHitboxes: EventHitbox[] = []
 let eventLineAnimationFrame = 0
@@ -56,13 +63,22 @@ let eventLineAnimationFrame = 0
 const formatWan = (value: number) => `${Math.round(value).toLocaleString()} 萬`
 const minDraggableYear = computed(() => Math.max(props.rows[1]?.year ?? 1, 1))
 const maxDraggableYear = computed(() => props.rows.at(-1)?.year ?? 1)
+const xLabelForRow = (row: TrendRow) => {
+  return `${props.currentAge + row.year} 歲`
+}
+const eventTimeLabel = (event: TrendEvent) => {
+  return `${props.currentAge + event.year} 歲`
+}
 
 const trendLabel = computed(() => {
   const eventText = props.events?.length
-    ? `，${props.events.map((event) => `${event.label} 第 ${event.year} 年 ${event.detail}`).join('，')}`
+    ? `，${props.events.map((event) => `${event.label} ${eventTimeLabel(event)} ${event.detail}`).join('，')}`
+    : ''
+  const ageAxisText = props.rows.length
+    ? `，年齡軸 ${xLabelForRow(props.rows[0])}到${xLabelForRow(props.rows.at(-1) ?? props.rows[0])}`
     : ''
 
-  return `資產變化趨勢${eventText}`
+  return `資產變化趨勢${ageAxisText}${eventText}`
 })
 
 const houseEventPlugin: Plugin<'line'> = {
@@ -91,9 +107,10 @@ const houseEventPlugin: Plugin<'line'> = {
       const row = props.rows[rowIndex]
       const x = xScale.getPixelForValue(rowIndex)
       const y = yScale.getPixelForValue(row.value)
+      const color = event.color ?? '#f59e0b'
 
       ctx.save()
-      ctx.strokeStyle = 'rgba(245, 158, 11, 0.82)'
+      ctx.strokeStyle = color
       ctx.lineWidth = 1
       ctx.setLineDash([4, 4])
       ctx.beginPath()
@@ -102,7 +119,7 @@ const houseEventPlugin: Plugin<'line'> = {
       ctx.stroke()
       ctx.setLineDash([])
 
-      ctx.fillStyle = '#f59e0b'
+      ctx.fillStyle = color
       ctx.strokeStyle = '#272826'
       ctx.lineWidth = 2
       ctx.beginPath()
@@ -117,15 +134,17 @@ const houseEventPlugin: Plugin<'line'> = {
       const labelY = Math.max(chartArea.top + 6, y - 34)
       const labelHeight = 22
       nextHitboxes.push({
+        id: event.id,
         x: labelX,
         y: labelY,
         width: labelWidth,
         height: labelHeight,
         label: event.label,
         year: event.year,
+        draggable: event.draggable ?? true,
       })
       ctx.fillStyle = '#1d1e1b'
-      ctx.strokeStyle = 'rgba(245, 158, 11, 0.7)'
+      ctx.strokeStyle = color
       ctx.lineWidth = 1
       ctx.beginPath()
       ctx.roundRect(labelX, labelY, labelWidth, labelHeight, 6)
@@ -143,7 +162,7 @@ const houseEventPlugin: Plugin<'line'> = {
 const createConfig = (): ChartConfiguration<'line'> => ({
   type: 'line',
   data: {
-    labels: props.rows.map((row) => `第 ${row.year} 年`),
+    labels: props.rows.map((row) => xLabelForRow(row)),
     datasets: [
       {
         label: '總資產',
@@ -243,7 +262,7 @@ const renderChart = () => {
   if (!canvas.value) return
 
   if (chart) {
-    chart.data.labels = props.rows.map((row) => `第 ${row.year} 年`)
+    chart.data.labels = props.rows.map((row) => xLabelForRow(row))
     chart.data.datasets[0].data = props.rows.map((row) => Math.round(row.value))
     chart.update(isDraggingEvent.value ? 'none' : undefined)
     return
@@ -293,23 +312,25 @@ const hitboxFromPointerEvent = (event: PointerEvent) => {
 
 const updateEventYearFromPointer = (event: PointerEvent) => {
   const nextYear = yearFromPointerEvent(event)
-  if (nextYear == null) return
+  if (nextYear == null || !draggingEventId.value) return
 
-  emit('update:event-year', nextYear)
+  emit('update:event-year', { id: draggingEventId.value, year: nextYear })
 }
 
 const handlePointerDown = (event: PointerEvent) => {
-  if (!hitboxFromPointerEvent(event)) return
+  const hitbox = hitboxFromPointerEvent(event)
+  if (!hitbox?.draggable) return
 
   isDraggingEvent.value = true
   isPointerOverEventTag.value = true
+  draggingEventId.value = hitbox.id
   canvas.value?.setPointerCapture(event.pointerId)
   updateEventYearFromPointer(event)
 }
 
 const handlePointerMove = (event: PointerEvent) => {
   if (!isDraggingEvent.value) {
-    isPointerOverEventTag.value = Boolean(hitboxFromPointerEvent(event))
+    isPointerOverEventTag.value = Boolean(hitboxFromPointerEvent(event)?.draggable)
     return
   }
 
@@ -321,7 +342,8 @@ const handlePointerUp = (event: PointerEvent) => {
 
   updateEventYearFromPointer(event)
   isDraggingEvent.value = false
-  isPointerOverEventTag.value = Boolean(hitboxFromPointerEvent(event))
+  draggingEventId.value = null
+  isPointerOverEventTag.value = Boolean(hitboxFromPointerEvent(event)?.draggable)
   canvas.value?.releasePointerCapture(event.pointerId)
 }
 

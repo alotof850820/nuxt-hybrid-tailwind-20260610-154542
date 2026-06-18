@@ -4,7 +4,7 @@ import IconArrowUpRight from '@tabler/icons-vue/dist/esm/icons/IconArrowUpRight.
 const plan = useFinancialPlan()
 
 const stockDetailItems = computed(() => plan.stockAssetBreakdown.value)
-const stockDetailTotal = computed(() => plan.finalValue.value)
+const stockDetailTotal = computed(() => plan.stockFinalValue.value)
 const stockDetailPercentBase = computed(() => Math.max(stockDetailTotal.value, 1))
 const activeStockDetailLabel = ref<string | null>(null)
 const stockDetailChanging = ref(false)
@@ -40,17 +40,6 @@ const stockMetrics = computed(() => [
     tone: 'up',
     changeTone: 'positive',
   },
-  {
-    key: 'monthly-return',
-    label: '本月回報',
-    value: 6.1,
-    suffix: '%',
-    signed: true,
-    decimals: 1,
-    detail: '上月 +5.2%',
-    tone: 'muted',
-    changeTone: 'neutral',
-  },
 ])
 
 useHead({
@@ -58,7 +47,7 @@ useHead({
 })
 
 watch(
-  () => [plan.monthlyInput.value, plan.returnRate.value, plan.totalYears.value],
+  () => [plan.initialAmount.value, plan.monthlyInput.value, plan.returnRate.value, plan.totalYears.value],
   () => pulseStockDetail(),
 )
 
@@ -74,7 +63,7 @@ onBeforeUnmount(() => {
       <p class="page-sub">追蹤中的股票與 ETF</p>
     </header>
 
-    <section class="kpi-grid grid-cols-1 md:grid-cols-3">
+    <section class="kpi-grid grid-cols-1 md:grid-cols-2">
       <AnimatedKpiCard
         v-for="metric in stockMetrics"
         :key="metric.label"
@@ -140,6 +129,16 @@ onBeforeUnmount(() => {
 
     <section class="card">
       <div class="card-hd">
+        <h2 class="card-title">本金設定</h2>
+      </div>
+      <label class="range-field">
+        <span>初始本金：{{ plan.initialAmount.value }} 萬</span>
+        <input v-model.number="plan.initialAmount.value" class="w-full" type="range" min="0" max="1000" step="50">
+      </label>
+    </section>
+
+    <section class="card">
+      <div class="card-hd">
         <h2 class="card-title">投資基本設定</h2>
       </div>
       <div class="grid gap-4 lg:grid-cols-3">
@@ -153,7 +152,7 @@ onBeforeUnmount(() => {
         </label>
         <label class="range-field">
           <span>規劃年數：{{ plan.totalYears.value }} 年</span>
-          <input v-model.number="plan.totalYears.value" class="w-full" type="range" min="10" max="50" step="1">
+          <input v-model.number="plan.totalYears.value" class="w-full" type="range" min="10" :max="plan.globalMaxYears.value" step="1">
         </label>
       </div>
     </section>
@@ -165,7 +164,7 @@ onBeforeUnmount(() => {
       <div class="grid gap-4 lg:grid-cols-2">
         <label class="range-field">
           <span>
-            {{ plan.stopInputYear.value > plan.totalYears.value ? '持續投入到最後' : `第 ${plan.stopInputYear.value} 年後停止投入` }}
+            {{ plan.stopInputYear.value > plan.totalYears.value ? '持續投入到最後' : `${plan.ageAtYear(plan.stopInputYear.value)} 歲後停止投入` }}
           </span>
           <input v-model.number="plan.stopInputYear.value" class="w-full" type="range" min="0" :max="plan.totalYears.value + 1" step="1">
         </label>
@@ -175,7 +174,7 @@ onBeforeUnmount(() => {
         </label>
         <label class="range-field lg:col-span-2">
           <span>
-            {{ plan.startWithdrawalYear.value > plan.totalYears.value ? '不提領' : `第 ${plan.startWithdrawalYear.value} 年開始提領` }}
+            {{ plan.startWithdrawalYear.value > plan.totalYears.value ? '不提領' : `${plan.ageAtYear(plan.startWithdrawalYear.value)} 歲開始提領` }}
           </span>
           <input v-model.number="plan.startWithdrawalYear.value" class="w-full" type="range" min="1" :max="plan.totalYears.value + 1" step="1">
         </label>
@@ -183,3 +182,4 @@ onBeforeUnmount(() => {
     </section>
   </div>
 </template>
+

@@ -23,6 +23,9 @@ export default defineNuxtConfig({
     '/api/**': { cors: true },
   },
   vite: {
+    optimizeDeps: {
+      exclude: ['chart.js', '@tabler/icons-vue'],
+    },
     plugins: [tailwindcss()],
   },
 })
