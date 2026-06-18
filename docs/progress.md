@@ -508,3 +508,11 @@
 - Verification passed: `npm run test:tabler-types` reported `Typed 11 Tabler deep icon imports.`
 - Verification passed: `npm run build` completed successfully from `C:\PlanLab`; Nuxt/Tailwind sourcemap warnings and a Vue shared deprecation warning were emitted but did not fail the build.
 - Marked `item-horizon-allocation-and-deposit-detail` completed in `docs/feature_list.json`.
+- User requested pushing the current PlanLab work to GitHub and deploying production on Vercel.
+- Fresh delivery verification passed: `npm run build` completed successfully before commit; Nuxt/Tailwind sourcemap warnings and a Vue shared deprecation warning were emitted but did not fail the build.
+- Created commit `4fcec4d` with message `feat: update PlanLab planning logic and deployment state`.
+- Pushed `main` to GitHub remote `origin` (`https://github.com/alotof850820/PlanLab.git`), updating `5d204ff..4fcec4d`.
+- Deployed to Vercel production with `npx vercel deploy --prod --yes`.
+- Vercel deployment `dpl_8X5UQRbGmSLooV9h3Fi7McQ23uH4` reached `READY`.
+- Production URL: `https://planlab-b1j19waqy-alotof850820s-projects.vercel.app`; production alias: `https://planlab-alotof850820.vercel.app`.
+- Verified deployment status with `npx vercel inspect planlab-b1j19waqy-alotof850820s-projects.vercel.app`, which reported target `production` and status `Ready`.
